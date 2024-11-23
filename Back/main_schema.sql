@@ -14,6 +14,7 @@ DROP PROCEDURE IF EXISTS spNuevoProducto;
 DROP PROCEDURE IF EXISTS spEliminarProducto;
 DROP PROCEDURE IF EXISTS spVerUsuarios;
 DROP PROCEDURE IF EXISTS spNuevoUsuario;
+DROP PROCEDURE IF EXISTS spModificarUsuario;
 DROP PROCEDURE IF EXISTS spEliminarUsuario;
 DROP PROCEDURE IF EXISTS spVerCategorias;
 DROP PROCEDURE IF EXISTS spNuevaCategoria;
@@ -29,12 +30,17 @@ DROP PROCEDURE IF EXISTS spEliminarProductoDeUnaVenta;
 DROP PROCEDURE IF EXISTS spModificarStockActual;
 DROP PROCEDURE IF EXISTS spVerFormasPago;
 DROP PROCEDURE IF EXISTS spObtenerProductosDeVenta;
+DROP PROCEDURE IF EXISTS spVerRoles;
+DROP PROCEDURE IF EXISTS spCrearRol;
+DROP PROCEDURE IF EXISTS spModificarRol;
+DROP PROCEDURE IF EXISTS spEliminarRol;
 
 -- CREAR TABLAS
 
 CREATE TABLE `roles` (
   `id_rol` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(50) NOT NULL,
+  `inhabilitado` BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (`id_rol`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -296,6 +302,20 @@ END //
 DELIMITER ;
 
 DELIMITER //
+CREATE PROCEDURE spModificarUsuario(
+    IN email VARCHAR(50),
+    IN password VARCHAR(60),
+    IN idRol INT,
+    IN idUsuario INT
+)
+BEGIN
+    UPDATE usuarios
+        SET email = email, password = password, id_rol = idRol
+    WHERE id_usuario = idUsuario;
+END //
+DELIMITER ;
+
+DELIMITER //
 CREATE PROCEDURE spEliminarUsuario(IN idUsuario INT)
 BEGIN 
 		UPDATE usuarios SET inhabilitado = TRUE WHERE id_usuario = idUsuario;
@@ -415,6 +435,18 @@ BEGIN
 END//
 DELIMITER ;
 
+-- SP Obtener productos asociados a una venta
+DELIMITER //
+CREATE PROCEDURE spObtenerProductosDeVenta(
+    IN idVenta INT
+)
+BEGIN
+    SELECT id_producto, cantidad
+    FROM ventas_producto
+    WHERE id_venta = idVenta;
+END //
+DELIMITER ;
+
 -- INSERT VENTAS_PRODUCTO
 DELIMITER //
 CREATE PROCEDURE spAgregarProductoAVenta(
@@ -465,20 +497,49 @@ DELIMITER ;
 
 -- SP FORMAS PAGO
 DELIMITER //
-CREATE PROCEDURE `spVerFormasPago`()
+CREATE PROCEDURE spVerFormasPago()
 BEGIN
 	SELECT * FROM formas_pago;
 END//
 DELIMITER ;
 
--- SP Para obtener productos asociados a una venta
+-- SP GET ROLES
 DELIMITER //
-CREATE PROCEDURE spObtenerProductosDeVenta(
-    IN idVenta INT
+CREATE PROCEDURE spVerRoles()
+BEGIN
+	SELECT * FROM roles
+    WHERE inhabilitado = FALSE;
+END//
+DELIMITER ;
+
+-- SP INSERT ROL
+DELIMITER //
+CREATE PROCEDURE spCrearRol(
+    IN nombre VARCHAR(50)
 )
 BEGIN
-    SELECT id_producto, cantidad
-    FROM ventas_producto
-    WHERE id_venta = idVenta;
+	INSERT INTO roles (nombre)
+    VALUES (nombre);
+END//
+DELIMITER ;
+
+-- SP UPDATE ROL
+DELIMITER //
+CREATE PROCEDURE spModificarRol(
+    IN nombre VARCHAR(50),
+    IN idRol INT
+)
+BEGIN
+    UPDATE roles
+        SET nombre = nombre
+    WHERE id_rol = idRol;
 END //
+DELIMITER ;
+
+--SP DELETE ROL
+DELIMITER //
+CREATE PROCEDURE spEliminarRol(IN idRol INT)
+BEGIN 
+		UPDATE roles SET inhabilitado = TRUE WHERE id_rol = idRol;
+END//
 DELIMITER ;
