@@ -46,7 +46,7 @@ function DetalleVentas() {
         }
 
         const data = await respuesta.json();
-        setFormasPago(data.formasPago[0]);
+        setFormasPago(data.formasPago);
       } catch (error) {
         console.error("Error al obtener las forams de pago:", error);
         setError("No se pudo cargar la información de las formas de pago.");
