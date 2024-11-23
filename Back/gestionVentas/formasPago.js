@@ -8,7 +8,7 @@ router.get("/", async (req, res) =>{
         const sql = "CALL spVerFormasPago";
         const [formasPago] = await db.execute(sql);
 
-        return res.status(200).send({ formasPago });
+        return res.status(200).send({ formasPago: formasPago[0] });
       } catch (error) {
         return res.status(500).send({ error: "Error al traer categorias" });
       }
