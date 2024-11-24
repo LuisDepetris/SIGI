@@ -28,12 +28,15 @@ DROP PROCEDURE IF EXISTS spEliminarVenta;
 DROP PROCEDURE IF EXISTS spAgregarProductoAVenta;
 DROP PROCEDURE IF EXISTS spEliminarProductoDeUnaVenta;
 DROP PROCEDURE IF EXISTS spModificarStockActual;
-DROP PROCEDURE IF EXISTS spVerFormasPago;
 DROP PROCEDURE IF EXISTS spObtenerProductosDeVenta;
 DROP PROCEDURE IF EXISTS spVerRoles;
 DROP PROCEDURE IF EXISTS spCrearRol;
 DROP PROCEDURE IF EXISTS spModificarRol;
 DROP PROCEDURE IF EXISTS spEliminarRol;
+DROP PROCEDURE IF EXISTS spVerFormasPago;
+DROP PROCEDURE IF EXISTS spNuevaFormaPago;
+DROP PROCEDURE IF EXISTS spModificarFormaPago;
+DROP PROCEDURE IF EXISTS spEliminarFormaPago;
 
 -- CREAR TABLAS
 
@@ -67,6 +70,7 @@ CREATE TABLE `categorias_producto` (
 CREATE TABLE `formas_pago` (
   `id_forma_pago` int NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(50) NOT NULL,
+  `inhabilitado` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id_forma_pago`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -495,11 +499,45 @@ BEGIN
 END//
 DELIMITER ;
 
--- SP FORMAS PAGO
+-- SP GET FORMAS PAGO
 DELIMITER //
 CREATE PROCEDURE spVerFormasPago()
 BEGIN
 	SELECT * FROM formas_pago;
+END//
+DELIMITER ;
+
+-- SP POST FORMAS PAGO
+DELIMITER //
+CREATE PROCEDURE `spNuevaFormaPago`(
+	IN descripcion VARCHAR(50)
+)
+BEGIN
+	INSERT INTO formas_pago (descripcion)
+    VALUES (descripcion);
+END//
+DELIMITER ;
+
+-- SP PUT FORMAS PAGO
+DELIMITER //
+CREATE PROCEDURE `spModificarFormaPago`(
+	IN idFormaPago INT,
+    IN descripcion VARCHAR(50)
+)
+BEGIN
+	UPDATE formas_pago
+	SET descripcion = descripcion
+	WHERE id_forma_pago = idFormaPago;
+END//
+DELIMITER ;
+
+-- SP DELETE FORMAS PAGO
+DELIMITER //
+CREATE PROCEDURE `spEliminarFormaPago`(
+	IN idFormaPago INT
+)
+BEGIN
+	UPDATE formas_pago SET inhabilitado = TRUE WHERE id_forma_pago = idFormaPago;
 END//
 DELIMITER ;
 
