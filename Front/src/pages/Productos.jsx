@@ -105,6 +105,10 @@ function Productos() {
     navigate("agregar");
   };
 
+  const nuevaCategoria = ()=>{
+    navigate("categorias");
+  };
+
   const handleSort = (columnaClickeada) => {
     if (sort === columnaClickeada) {
       setOrder(order === "ASC" ? "DESC" : "ASC");
@@ -128,6 +132,10 @@ function Productos() {
           <button className="btn-nuevo" onClick={handleAgregar}>
             Añadir Nuevo
           </button>
+          <button className="btn-nuevo" onClick={nuevaCategoria}>
+            Categorias
+          </button>
+          
         </div>
 
         {/* Componente de Paginación */}
