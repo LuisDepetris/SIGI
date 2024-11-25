@@ -5,6 +5,7 @@ const Paginacion = ({
   paginaActual,
   totalPaginas,
   onPaginaChange,
+  onLimitChange,
   registrosVisibles,
 }) => {
   const paginas = Array.from({ length: totalPaginas }, (_, index) => index + 1);
@@ -35,9 +36,19 @@ const Paginacion = ({
         Siguiente
       </button>
 
-      <span className="registros-info">
-        ({registrosVisibles})
-      </span>
+      <select
+        className="selector-limite"
+        onChange={(e) => onLimitChange(parseInt(e.target.value))}
+      >
+        <option value="10" selected>
+          10
+        </option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+
+      <span className="registros-info">({registrosVisibles})</span>
     </div>
   );
 };
