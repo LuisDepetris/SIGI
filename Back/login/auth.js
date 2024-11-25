@@ -28,10 +28,10 @@ router.post("/login", validarAtributosLogin(), async (req, res) => {
     return res.status(400).send({ errores: validacion.array() });
   }
 
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  const [usuarios] = await db.execute("select * from usuarios where email=?", [
-    email,
+  const [usuarios] = await db.execute("select * from usuarios where username=?", [
+    username,
   ]);
 
   if (usuarios.length === 0) {
@@ -64,7 +64,7 @@ router.post("/login", validarAtributosLogin(), async (req, res) => {
   // Enviar jwt
   res.send({
     idUsuario: usuarios[0].id_usuario,
-    email: usuarios[0].email,
+    username: usuarios[0].username,
     idRol: roles[0].idRol,
     rol: roles[0].nombre,
     token,

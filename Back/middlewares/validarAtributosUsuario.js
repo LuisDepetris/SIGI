@@ -1,15 +1,12 @@
 import { body } from "express-validator";
 
 const validarAtributosUsuario = () => [
-  body("email")
+  body("username")
     .notEmpty()
-    .withMessage("El email no puede estar vacío")
-    .bail()
-    .isEmail()
-    .withMessage("El formato del email es inválido")
+    .withMessage("El username no puede estar vacío")
     .bail()
     .isLength({ max: 50 })
-    .withMessage("El email no puede tener más de 50 caracteres"),
+    .withMessage("El username no puede tener más de 50 caracteres"),
   body("password")
     .isStrongPassword({
       minLength: 8,
