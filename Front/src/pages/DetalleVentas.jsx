@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/DetalleVentas.css";
+import { useAuth } from "../auth/authContext";
 
 function DetalleVentas() {
   const { id } = useParams();
+  const { sesion } = useAuth();
   const navigate = useNavigate();
   const [venta, setVenta] = useState(null);
   const [productos, setProductos] = useState([]);
@@ -138,8 +140,13 @@ function DetalleVentas() {
   };
 
   const handleEditar = () => {
-    alert("Usted esta habilitado para editar los registros");
-    setEditando(true);
+    if (sesion.rol === "Lector") {
+      alert("No tienes permisos para editar");
+      return;
+    } else {
+      alert("Usted esta habilitado para editar los registros");
+      setEditando(true);
+    }
   };
 
   const handleGuardar = async (id, ventaTotal, cantidadTotal, idFormaPago) => {
@@ -254,7 +261,11 @@ function DetalleVentas() {
           <button className="botones-edicion" onClick={handleVolver}>
             Volver a Ventas
           </button>
-          <button className="botones-edicion" onClick={handleEditar}>
+          <button
+            className="botones-edicion"
+            onClick={handleEditar}
+            disabled={sesion.rol === "Lector"}
+          >
             Editar
           </button>
           <button

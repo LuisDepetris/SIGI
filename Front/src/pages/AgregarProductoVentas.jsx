@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/AgregarProductoVentas.css";
+import { useAuth } from "../auth/authContext";
 
 function AgregarProductoVentas() {
   const [productos, setProductos] = useState([]);
@@ -9,6 +10,7 @@ function AgregarProductoVentas() {
   const [error, setError] = useState("");
   const [detalleVenta, setDetalleVenta] = useState([]);
   const [productosVendidos, setProductosVendidos] = useState([]);
+  const { sesion } = useAuth();
   const [productosActualizados, setProductosActualizados] = useState([]); //en este arreglo voy a poner el nuevo arreglo con los productos vendidos. luego de eliminar
   const navigate = useNavigate();
 
@@ -48,6 +50,10 @@ function AgregarProductoVentas() {
     setCantidad(nuevaCantidad > 0 ? nuevaCantidad : 1);
   };
 
+  const handleVolver = () => {
+    navigate("/ventas");
+  };
+
   const handleGuardar = async () => {
     if (productosVendidos.length === 0) {
       setError("Debe agregar un producto");
@@ -59,6 +65,7 @@ function AgregarProductoVentas() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${sesion.token}`,
         },
         body: JSON.stringify({
           ventaTotal: ventaTotal,
@@ -242,7 +249,9 @@ function AgregarProductoVentas() {
         )}
 
         <br />
-
+        <button className="btn-guardar" onClick={handleVolver}>
+          Volver a Ventas
+        </button>
         <button
           className="btn-guardar"
           disabled={!productoSeleccionado || cantidad <= 0}

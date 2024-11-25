@@ -11,6 +11,10 @@
   background-color: #e1eef8;
 }
 
+.contenido {
+  padding-top: 70px; /* Espacio suficiente para el menú fijo */
+}
+
 /* Estilos responsivos */
 @media (max-width: 600px) {
   .header {

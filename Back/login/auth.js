@@ -46,22 +46,29 @@ router.post("/login", validarAtributosLogin(), async (req, res) => {
     return res.status(400).send({ error: "Usuario o contraseña inválida" });
   }
 
-  const [roles] = await db.execute("select nombre from roles where id_rol=?", [
-    usuarios[0].id_rol,
-  ]);
+  const [roles] = await db.execute(
+    "select id_rol as idRol, nombre from roles where id_rol=?",
+    [usuarios[0].id_rol]
+  );
 
   if (roles.length === 0) {
     return res.status(500).send({ error: "Error interno" });
   }
 
   // Crear jwt
-  const payload = { usuarioId: usuarios[0].id_usuario, rol: roles[0].nombre };
+  const payload = { idUsuario: usuarios[0].id_usuario, rol: roles[0].nombre };
   const token = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "2h",
   });
 
   // Enviar jwt
-  res.send({ token });
+  res.send({
+    idUsuario: usuarios[0].id_usuario,
+    email: usuarios[0].email,
+    idRol: roles[0].idRol,
+    rol: roles[0].nombre,
+    token,
+  });
 });
 
 export default router;

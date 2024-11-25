@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/Formulario.module.css";
+import { useAuth } from "../auth/authContext";
 
 const Formulario = ({ producto, onGuardar, onCancelar }) => {
+  const { sesion } = useAuth();
   const [data, setData] = useState({
     id_producto: producto?.id_producto || 0,
     nombre_producto: producto?.nombre_producto || "",
@@ -13,7 +15,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
     incremento: producto?.incremento || 0,
     precio_final: producto?.precio_final || 0,
     id_categoria: producto?.id_categoria || 0,
-    modificadoPor: 13,
+    modificadoPor: null,
   });
   const [categoriasFiltradas, setCategoriasFiltradas] = useState([]);
   const [precioSugerido, setPrecioSugerido] = useState(0);
@@ -104,21 +106,29 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
         ? `http://localhost:3000/productos`
         : `http://localhost:3000/productos/${data.id_producto}`;
 
+    const productoData = {
+      nombreProducto: data.nombre_producto,
+      stockActual: data.stock_actual,
+      precioLista: data.precio_lista,
+      descuentoUno: data.descuento_uno,
+      descuentoDos: data.descuento_dos,
+      incremento: data.incremento,
+      precioFinal: data.precio_final,
+      idCategoria: data.id_categoria,
+    };
+
+    if (method === "PUT") {
+      productoData.modificadoPor = Number(sesion.idUsuario);
+    }
+
     try {
       const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nombreProducto: data.nombre_producto,
-          stockActual: data.stock_actual,
-          precioLista: data.precio_lista,
-          descuentoUno: data.descuento_uno,
-          descuentoDos: data.descuento_dos,
-          incremento: data.incremento,
-          precioFinal: data.precio_final,
-          idCategoria: data.id_categoria,
-          modificadoPor: 13,
-        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sesion.token}`,
+        },
+        body: JSON.stringify(productoData),
       });
 
       if (response.ok) {

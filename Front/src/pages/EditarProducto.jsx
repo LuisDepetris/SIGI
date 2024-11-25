@@ -11,7 +11,6 @@ const EditarProducto = () => {
   useEffect(() => {
     const getProducto = async () => {
       try {
-        console.log(id);
         const response = await fetch(`http://localhost:3000/productos/${id}`);
         if (response.ok) {
           const { producto } = await response.json();

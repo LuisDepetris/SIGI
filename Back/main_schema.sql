@@ -230,7 +230,10 @@ BEGIN
             p.descuento_dos,
             p.incremento,
             p.precio_final,
-            p.id_categoria
+            p.id_categoria,
+            p.modificado_por,
+            p.fecha_modificacion,
+            p.inhabilitado
         FROM productos AS p
         WHERE p.id_producto = ? AND p.inhabilitado = 0
     ');

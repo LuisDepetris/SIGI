@@ -5,6 +5,8 @@ import validarId from "../middlewares/validarId.js";
 import validarAtributosProducto from "../middlewares/validarAtributosProducto.js";
 import { validationResult } from "express-validator";
 const router = express.Router();
+import passport from "passport";
+import validarPermisosUsuario from "../middlewares/validarPermisosUsuario.js";
 
 router.get("/", validarPaginacionProductos(), async (req, res) => {
   const {
@@ -159,24 +161,30 @@ router.post("/", validarAtributosProducto("POST"), async (req, res) => {
   }
 });
 
-router.delete("/:id", validarId(), async (req, res) => {
-  const validacion = validationResult(req);
-  if (!validacion.isEmpty()) {
-    res.status(400).send({ errores: validacion.array() });
-    return;
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  validarPermisosUsuario(["Administrador"]),
+  validarId(),
+  async (req, res) => {
+    const validacion = validationResult(req);
+    if (!validacion.isEmpty()) {
+      res.status(400).send({ errores: validacion.array() });
+      return;
+    }
+
+    const id = Number(req.params.id);
+
+    const sql = "CALL spEliminarProducto(?)";
+
+    try {
+      await db.execute(sql, [id]);
+      return res.status(200).send({ id });
+    } catch (error) {
+      console.error("Error al eliminar el producto: ", error.message);
+      return res.status(500).send({ error: "Error al eliminar el producto" });
+    }
   }
-
-  const id = Number(req.params.id);
-
-  const sql = "CALL spEliminarProducto(?)";
-
-  try {
-    await db.execute(sql, [id]);
-    return res.status(200).send({ id });
-  } catch (error) {
-    console.error("Error al eliminar el producto: ", error.message);
-    return res.status(500).send({ error: "Error al eliminar el producto" });
-  }
-});
+);
 
 export default router;

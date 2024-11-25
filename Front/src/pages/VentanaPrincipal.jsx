@@ -1,5 +1,3 @@
-import React from "react";
-import Menu from "../components/Menu";
 import "../styles/VentanaPrincipal.css";
 
 function VentanaPrincipal() {
