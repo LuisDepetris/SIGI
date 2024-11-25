@@ -129,6 +129,10 @@ function Productos() {
     }
   };
 
+  const handleLimitChange = (num) => {
+    setLimite(num);
+  };
+
   return (
     <div className="productos">
       <div className="header-productos">
@@ -146,6 +150,7 @@ function Productos() {
         paginaActual={paginaActual}
         totalPaginas={totalPaginas}
         onPaginaChange={(nuevaPagina) => setPaginaActual(nuevaPagina)}
+        onLimitChange={handleLimitChange}
         registrosVisibles={`Registros ${registrosInicio}-${registrosFin} de ${totalProductos}`}
       />
 
