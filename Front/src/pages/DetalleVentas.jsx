@@ -49,7 +49,10 @@ function DetalleVentas() {
         }
 
         const data = await respuesta.json();
-        setFormasPago(data.formasPago);
+        const formasFiltradas = data.formasPago.filter(
+          (pago) => pago.inhabilitado == 0
+        );
+        setFormasPago(formasFiltradas);
       } catch (error) {
         console.error("Error al obtener las forams de pago:", error);
         setError("No se pudo cargar la información de las formas de pago.");
