@@ -182,6 +182,14 @@ function DetalleVentas() {
     navigate("/agregarProductoVentas");
   };
 
+  const elegirMedioPago = (e)=>{
+    const idActual = parseInt(e.target.value);
+    if (idActual === -1) {
+      navigate("formas_de_pago");
+    } else {
+      setFormaPagoSeleccionada(idActual);
+    }
+  }
   return (
     <div className="detalle-ventas">
       {error && <p className="error">{error}</p>}
@@ -200,7 +208,7 @@ function DetalleVentas() {
             {editando ? (
               <select
                 value={formaPagoSeleccionada}
-                onChange={(e) => setFormaPagoSeleccionada(e.target.value)}
+                onChange={elegirMedioPago}
               >
                 <option value="">Seleccione una Opción</option>
                 {formasPago.map((forma) => (
@@ -208,6 +216,7 @@ function DetalleVentas() {
                     {forma.descripcion}
                   </option>
                 ))}
+                <option value={-1}>Agregar nueva Forma de Pago</option>
               </select>
             ) : (
               <p>{venta.formaPago}</p>
