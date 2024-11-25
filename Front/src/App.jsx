@@ -10,6 +10,7 @@ import Layout from "./components/Layout";
 import VentanaPrincipal from "./pages/VentanaPrincipal";
 import DetalleVentas from "./pages/DetalleVentas";
 import AgregarProductoVentas from "./pages/AgregarProductoVentas";
+import GestionFormPagos from "./pages/GestionFormPagos";
 import { AuthPage, AuthRol } from "./auth/authContext";
 import GestionUsuarios from "./pages/GestionUsuarios";
 import Login from "./pages/Login";
@@ -133,6 +134,7 @@ function App() {
             </div>
           }
         />
+        <Route path="ventas/:id/formas_de_pago" element={<GestionFormPagos />} />
       </Route>
     </Routes>
   );
