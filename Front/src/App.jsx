@@ -134,7 +134,7 @@ function App() {
             </div>
           }
         />
-        <Route path="ventas/formas_de_pago" element={<GestionFormPagos />} />
+        <Route path="ventas/:id/formas_de_pago" element={<GestionFormPagos />} />
       </Route>
     </Routes>
   );
