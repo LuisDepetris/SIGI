@@ -11,6 +11,7 @@ function AgregarProductoVentas() {
   const [detalleVenta, setDetalleVenta] = useState([]);
   const [productosVendidos, setProductosVendidos] = useState([]);
   const { sesion } = useAuth();
+  const [productosActualizados, setProductosActualizados] = useState([]); //en este arreglo voy a poner el nuevo arreglo con los productos vendidos. luego de eliminar
   const navigate = useNavigate();
 
   const { idVenta } = useParams();
@@ -134,6 +135,13 @@ function AgregarProductoVentas() {
     }
   };
 
+  const handleBorrar = (id_producto) => {
+    const productosActualizados = productosVendidos.filter(
+      (producto) => producto.id_producto !== id_producto
+    );
+    setProductosVendidos(productosActualizados);
+  };
+
   return (
     <div className="pagina-completa">
       <div className="detalle-ventas">
@@ -164,7 +172,14 @@ function AgregarProductoVentas() {
           <tbody>
             {productosVendidos.map((producto, index) => (
               <tr key={producto.id_producto}>
-                <td></td>
+                <td>
+                  <button
+                    className="btn-eliminar"
+                    onClick={() => handleBorrar(producto.id_producto)}
+                  >
+                    🗑️
+                  </button>
+                </td>
                 <td>{producto.id_producto}</td>
                 <td>{producto.nombre_producto}</td>
                 <td>${producto.precio_final}</td>

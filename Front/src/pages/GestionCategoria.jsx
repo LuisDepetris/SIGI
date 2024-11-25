@@ -17,7 +17,7 @@ const GestionCategorias = () => {
       const response = await fetch("http://localhost:3000/categorias");
       if (response.ok) {
         const data = await response.json();
-        const categoriasFiltradas = data.categorias[0].filter(
+        const categoriasFiltradas = data.categorias.filter(
           (cat) => cat.inhabilitado == 0
         );
         setCategorias(categoriasFiltradas);

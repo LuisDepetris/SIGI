@@ -32,7 +32,7 @@ function DetalleProducto() {
         }
 
         const data = await respuesta.json();
-        setCategorias(data.categorias[0] || []);
+        setCategorias(data.categorias || []);
       } catch (error) {
         console.error("Error al obtener las categorias:", error);
         alert("No se pudo obtener las categorias");
