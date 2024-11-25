@@ -10,6 +10,7 @@ import Layout from "./components/Layout";
 import VentanaPrincipal from "./pages/VentanaPrincipal";
 import DetalleVentas from "./pages/DetalleVentas";
 import AgregarProductoVentas from "./pages/AgregarProductoVentas";
+import GestionFormPagos from "./pages/GestionFormPagos";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           path="/agregarProductoventas"
           element={<AgregarProductoVentas />}
         />
+        <Route path="ventas/formas_de_pago" element={<GestionFormPagos />} />
       </Route>
     </Routes>
   );
