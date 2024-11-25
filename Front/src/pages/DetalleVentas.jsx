@@ -11,6 +11,7 @@ function DetalleVentas() {
   const [formasPago, setFormasPago] = useState([]);
   const [editando, setEditando] = useState(false);
   const [formaPagoSeleccionada, setFormaPagoSeleccionada] = useState("");
+  const [eliminando, setEliminando] = useState(false);
 
   useEffect(() => {
     const obtenerDetalleVenta = async () => {
@@ -56,8 +57,80 @@ function DetalleVentas() {
     obetenerFormasPago();
   }, []);
 
-  const handleBorrar = (id) => {
-    alert("elimino una venta");
+  const handleBorrar = async (
+    idVentaProducto,
+    idProducto,
+    cantidad,
+    ventaSubTotal
+  ) => {
+    if (productos.length === 1) {
+      alert("No puedes eliminar el único producto de la venta.");
+      return;
+    }
+
+    const confirmacion = window.confirm(
+      `¿Estás seguro de eliminar el producto?`
+    );
+    if (!confirmacion) return;
+
+    try {
+      const respuesta = await fetch(
+        `http://localhost:3000/ventas/${id}/ventas_producto/`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            idVentaProducto: idVentaProducto,
+            idProducto: idProducto,
+            cantidad: cantidad,
+            ventaSubTotal: ventaSubTotal,
+          }),
+        }
+      );
+
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json();
+        throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
+      }
+
+      const productosActualizados = productos.filter(
+        (producto) => producto.idProducto !== idProducto
+      );
+
+      const nuevoTotal = productosActualizados.reduce(
+        (ac, current) => ac + parseInt(current.subTotal),
+        0
+      );
+
+      const nuevaCantidadTotal = productosActualizados.reduce(
+        (ac, current) => ac + current.cantidad,
+        0
+      );
+
+      setProductos(productosActualizados);
+
+      setVenta({
+        ...venta,
+        ventaTotal: parseFloat(nuevoTotal),
+        cantidadTotal: nuevaCantidadTotal,
+      });
+
+      handleGuardar(
+        id,
+        parseFloat(nuevoTotal),
+        nuevaCantidadTotal,
+        venta.idFormaPago
+      );
+
+      setEliminando(true);
+
+      alert("Producto eliminado correctamente.");
+    } catch (error) {
+      console.error("Error al eliminar la venta:", error);
+      alert("No se pudo eliminar la venta.");
+    }
   };
 
   const handleVolver = () => {
@@ -69,8 +142,33 @@ function DetalleVentas() {
     setEditando(true);
   };
 
-  const handleGuardar = () => {
-    alert("deberia guardar lo editado");
+  const handleGuardar = async (id, ventaTotal, cantidadTotal, idFormaPago) => {
+    try {
+      const respuesta = await fetch(`http://localhost:3000/ventas/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ventaTotal: ventaTotal,
+          cantidadTotal: cantidadTotal,
+          idFormaPago: idFormaPago,
+        }),
+      });
+      console.log(`${idFormaPago}`);
+      if (!respuesta.ok) {
+        const errorData = await respuesta.json();
+        throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
+      }
+
+      if (!editando) {
+        alert("Venta modificada con éxito");
+        navigate("/ventas", { replace: true });
+      }
+    } catch (error) {
+      console.error("Error al modificar la venta:", error);
+      alert("No se pudo modificar la venta.");
+    }
   };
 
   const handleAgregar = () => {
@@ -97,6 +195,7 @@ function DetalleVentas() {
                 value={formaPagoSeleccionada}
                 onChange={(e) => setFormaPagoSeleccionada(e.target.value)}
               >
+                <option value="">Seleccione una Opción</option>
                 {formasPago.map((forma) => (
                   <option key={forma.id_forma_pago} value={forma.id_forma_pago}>
                     {forma.descripcion}
@@ -130,7 +229,14 @@ function DetalleVentas() {
                     <button
                       className="btn-eliminar"
                       disabled={!editando}
-                      onClick={() => handleBorrar(producto.idProducto)}
+                      onClick={() =>
+                        handleBorrar(
+                          producto.idVentaProducto,
+                          producto.idProducto,
+                          producto.cantidad,
+                          producto.subTotal
+                        )
+                      }
                     >
                       🗑️
                     </button>
@@ -153,8 +259,15 @@ function DetalleVentas() {
           </button>
           <button
             className="botones-edicion"
-            disabled={!editando}
-            onClick={handleGuardar}
+            disabled={!editando || !formaPagoSeleccionada}
+            onClick={() =>
+              handleGuardar(
+                venta.idVenta,
+                venta.ventaTotal,
+                venta.cantidadTotal,
+                formaPagoSeleccionada
+              )
+            }
           >
             Guardar
           </button>
