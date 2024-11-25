@@ -78,6 +78,7 @@ const GestionCategorias = () => {
             : agregarCategoria(descripcion);
         }}
         categoria={modoEdicion ? categoriaSeleccionada : null}
+        tipoEntidad="categoria"
         onCancel={() => {
           navigate(-1);
           setModoEdicion(false);
