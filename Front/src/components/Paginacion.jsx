@@ -39,10 +39,9 @@ const Paginacion = ({
       <select
         className="selector-limite"
         onChange={(e) => onLimitChange(parseInt(e.target.value))}
+        defaultValue={10}
       >
-        <option value="10" selected>
-          10
-        </option>
+        <option value="10">10</option>
         <option value="20">20</option>
         <option value="50">50</option>
         <option value="100">100</option>
