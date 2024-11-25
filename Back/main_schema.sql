@@ -49,12 +49,12 @@ CREATE TABLE `roles` (
 
 CREATE TABLE `usuarios` (
   `id_usuario` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(50) NOT NULL,
+  `username` varchar(50) NOT NULL,
   `password` varchar(60) NOT NULL,
   `id_rol` int NOT NULL,
   `inhabilitado` BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (`id_usuario`),
-  UNIQUE KEY `email_UNIQUE` (`email`),
+  UNIQUE KEY `username_UNIQUE` (`username`),
   UNIQUE KEY `password_UNIQUE` (`password`),
   KEY `id_rol` (`id_rol`),
   CONSTRAINT `id_rol` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id_rol`)
@@ -141,7 +141,7 @@ INSERT INTO roles (nombre) VALUES
 ('Editor'),
 ('Lector');
 
-INSERT INTO usuarios (email, password, id_rol) VALUES
+INSERT INTO usuarios (username, password, id_rol) VALUES
 ('admin@example.com', 'password123', 1),
 ('vendedor@example.com', 'password456', 2),
 ('cliente@example.com', 'password789', 3);
@@ -230,7 +230,10 @@ BEGIN
             p.descuento_dos,
             p.incremento,
             p.precio_final,
-            p.id_categoria
+            p.id_categoria,
+            p.modificado_por,
+            p.fecha_modificacion,
+            p.inhabilitado
         FROM productos AS p
         WHERE p.id_producto = ? AND p.inhabilitado = 0
     ');
@@ -295,26 +298,26 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE spNuevoUsuario(
-    IN email VARCHAR(50),
+    IN username VARCHAR(50),
     IN password VARCHAR(60),
     IN idRol INT
 )
 BEGIN
-    INSERT INTO usuarios (email, password, id_rol)
-    VALUES (email, password, idRol);
+    INSERT INTO usuarios (username, password, id_rol)
+    VALUES (username, password, idRol);
 END //
 DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE spModificarUsuario(
-    IN email VARCHAR(50),
+    IN username VARCHAR(50),
     IN password VARCHAR(60),
     IN idRol INT,
     IN idUsuario INT
 )
 BEGIN
     UPDATE usuarios
-        SET email = email, password = password, id_rol = idRol
+        SET username = username, password = password, id_rol = idRol
     WHERE id_usuario = idUsuario;
 END //
 DELIMITER ;

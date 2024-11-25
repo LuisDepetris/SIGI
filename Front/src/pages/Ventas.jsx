@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import Paginacion from "../components/Paginacion";
 import React from "react";
 import "../styles/Ventas.css";
+import { useAuth } from "../auth/authContext";
 
 function Ventas() {
   const [ventas, setVentas] = useState([]);
   const [totalVentas, setTotalVentas] = useState(0);
   const [paginaActual, setPaginaActual] = useState(1);
   const [limite, setLimite] = useState(10);
+  const { sesion } = useAuth();
 
   const navigate = useNavigate();
 
@@ -56,6 +58,9 @@ function Ventas() {
     try {
       const respuesta = await fetch(`http://localhost:3000/ventas/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${sesion.token}`,
+        },
       });
 
       if (!respuesta.ok) {

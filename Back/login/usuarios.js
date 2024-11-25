@@ -33,16 +33,16 @@ router.post("/",
       return res.status(400).send({ errores: validacion.array() });
     }
 
-    const email = req.body.email;
+    const username = req.body.username;
     const password = req.body.password;
     const idRol = req.body.idRol;
 
     const passwordHashed = await bcrypt.hash(password, 10);
     try {
       const sql = "CALL spNuevoUsuario(?,?,?)";
-      await db.execute(sql, [email, passwordHashed, idRol]);
+      await db.execute(sql, [username, passwordHashed, idRol]);
 
-      return res.status(200).send({ usuario: { email, idRol } });
+      return res.status(200).send({ usuario: { username, idRol } });
     } catch (error) {
       return res.status(500).send({ error: "Error al crear usuario" });
     }
@@ -60,7 +60,7 @@ router.put("/:id",
 
 
     const idUsuario = Number(req.params.id);
-    const email = req.body.email;
+    const username = req.body.username;
     const password = req.body.password;
     const idRol = req.body.idRol;
 
@@ -68,10 +68,10 @@ router.put("/:id",
     const passwordHashed = await bcrypt.hash(password, 10);
     try {
       const sql = "CALL spModificarUsuario(?,?,?,?)";
-      await db.execute(sql, [email, passwordHashed, idRol, idUsuario]);
+      await db.execute(sql, [username, passwordHashed, idRol, idUsuario]);
 
 
-      return res.status(200).send({ usuario: { email, idRol } });
+      return res.status(200).send({ usuario: { username, idRol } });
     } catch (error) {
       return res.status(500).send({ error: "Error al modificar el usuario" });
     }

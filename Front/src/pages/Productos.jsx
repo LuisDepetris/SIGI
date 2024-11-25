@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Productos.css";
 import Paginacion from "../components/Paginacion";
+import { useAuth } from "../auth/authContext";
 
 function Productos() {
   const [productos, setProductos] = useState([]);
@@ -13,6 +14,7 @@ function Productos() {
   const [limite, setLimite] = useState(10);
   const [totalProductos, setTotalProductos] = useState(0);
   const [categorias, setCategorias] = useState([]);
+  const { sesion } = useAuth();
 
   const totalPaginas = Math.ceil(totalProductos / limite);
   const registrosInicio =
@@ -77,6 +79,9 @@ function Productos() {
     try {
       const respuesta = await fetch(`http://localhost:3000/productos/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${sesion.token}`,
+        },
       });
 
       if (respuesta.ok) {
@@ -105,7 +110,7 @@ function Productos() {
     navigate("agregar");
   };
 
-  const nuevaCategoria = ()=>{
+  const nuevaCategoria = () => {
     navigate("categorias");
   };
 
@@ -124,101 +129,103 @@ function Productos() {
     }
   };
 
+  const handleLimitChange = (num) => {
+    setLimite(num);
+  };
+
   return (
-    <>
-      <div className="productos">
-        <div className="header-productos">
-          <h2>Productos</h2>
-          <button className="btn-nuevo" onClick={handleAgregar}>
-            Añadir Nuevo
-          </button>
-          <button className="btn-nuevo" onClick={nuevaCategoria}>
-            Categorias
-          </button>
-          
-        </div>
-
-        {/* Componente de Paginación */}
-        <Paginacion
-          paginaActual={paginaActual}
-          totalPaginas={totalPaginas}
-          onPaginaChange={(nuevaPagina) => setPaginaActual(nuevaPagina)}
-          registrosVisibles={`Registros ${registrosInicio}-${registrosFin} de ${totalProductos}`}
-        />
-
-        <table className="productos-tabla">
-          <thead>
-            <tr>
-              <th></th>
-              <th>ID Prod.</th>
-              <th onClick={() => handleSort("nombre_producto")}>
-                Nombre Producto {mostrarFlecha("nombre_producto")}
-              </th>
-              <th onClick={() => handleSort("precio_lista")}>
-                Precio de Lista {mostrarFlecha("precio_lista")}
-              </th>
-              <th onClick={() => handleSort("precio_final")}>
-                Precio de Venta {mostrarFlecha("precio_final")}
-              </th>
-              <th onClick={() => handleSort("stock_actual")}>
-                Stock {mostrarFlecha("stock_actual")}
-              </th>
-              <th>Categoria {mostrarFlecha("categoria")}</th>
-            </tr>
-            <tr>
-              <th></th>
-              <th></th>
-              <th>
-                <input
-                  className="textBox"
-                  type="text"
-                  value={terminoBusqueda}
-                  onChange={(e) => setTerminoBusqueda(e.target.value)}
-                  placeholder="Buscar por nombre"
-                />
-              </th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {productos.map((producto) => (
-              <tr key={producto.id_producto}>
-                <td>
-                  <button
-                    className="btn-detalles"
-                    onClick={() => handleVerDetalles(producto.id_producto)}
-                  >
-                    🔍
-                  </button>
-                  <button
-                    className="btn-eliminar"
-                    onClick={() => handleBorrar(producto.id_producto)}
-                  >
-                    🗑️
-                  </button>
-                </td>
-                <td>{producto.id_producto}</td>
-                <td>{producto.nombre_producto}</td>
-                <td>${producto.precio_lista}</td>
-                <td>${producto.precio_final}</td>
-                <td>{producto.stock_actual}</td>
-                <td>
-                  {
-                    categorias.find(
-                      (categoria) =>
-                        categoria.id_categoria === producto.id_categoria
-                    )?.descripcion
-                  }
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="productos">
+      <div className="header-productos">
+        <h2>Productos</h2>
+        <button className="btn-nuevo" onClick={handleAgregar}>
+          Añadir Nuevo
+        </button>
+        <button className="btn-nuevo" onClick={nuevaCategoria}>
+          Categorias
+        </button>
       </div>
-    </>
+
+      {/* Componente de Paginación */}
+      <Paginacion
+        paginaActual={paginaActual}
+        totalPaginas={totalPaginas}
+        onPaginaChange={(nuevaPagina) => setPaginaActual(nuevaPagina)}
+        onLimitChange={handleLimitChange}
+        registrosVisibles={`Registros ${registrosInicio}-${registrosFin} de ${totalProductos}`}
+      />
+
+      <table className="productos-tabla">
+        <thead>
+          <tr>
+            <th></th>
+            <th>ID Prod.</th>
+            <th onClick={() => handleSort("nombre_producto")}>
+              Nombre Producto {mostrarFlecha("nombre_producto")}
+            </th>
+            <th onClick={() => handleSort("precio_lista")}>
+              Precio de Lista {mostrarFlecha("precio_lista")}
+            </th>
+            <th onClick={() => handleSort("precio_final")}>
+              Precio de Venta {mostrarFlecha("precio_final")}
+            </th>
+            <th onClick={() => handleSort("stock_actual")}>
+              Stock {mostrarFlecha("stock_actual")}
+            </th>
+            <th>Categoria {mostrarFlecha("categoria")}</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th></th>
+            <th>
+              <input
+                className="textBox"
+                type="text"
+                value={terminoBusqueda}
+                onChange={(e) => setTerminoBusqueda(e.target.value)}
+                placeholder="Buscar por nombre"
+              />
+            </th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {productos.map((producto) => (
+            <tr key={producto.id_producto}>
+              <td>
+                <button
+                  className="btn-detalles"
+                  onClick={() => handleVerDetalles(producto.id_producto)}
+                >
+                  🔍
+                </button>
+                <button
+                  className="btn-eliminar"
+                  onClick={() => handleBorrar(producto.id_producto)}
+                >
+                  🗑️
+                </button>
+              </td>
+              <td>{producto.id_producto}</td>
+              <td>{producto.nombre_producto}</td>
+              <td>${producto.precio_lista}</td>
+              <td>${producto.precio_final}</td>
+              <td>{producto.stock_actual}</td>
+              <td>
+                {
+                  categorias.find(
+                    (categoria) =>
+                      categoria.id_categoria === producto.id_categoria
+                  )?.descripcion
+                }
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
