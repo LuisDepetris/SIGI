@@ -13,8 +13,8 @@ function DetalleProducto() {
       try {
         const response = await fetch(`http://localhost:3000/productos/${id}`);
         if (response.ok) {
-          const { producto } = await response.json();
-          setProducto(producto);
+          const data = await response.json();
+          setProducto(data.producto);
         } else {
           console.error("Error al obtener el producto:", response.status);
         }
@@ -32,7 +32,7 @@ function DetalleProducto() {
         }
 
         const data = await respuesta.json();
-        setCategorias(data.categorias[0]);
+        setCategorias(data.categorias || []);
       } catch (error) {
         console.error("Error al obtener las categorias:", error);
         alert("No se pudo obtener las categorias");
@@ -48,7 +48,7 @@ function DetalleProducto() {
   };
 
   const categoriaFiltrada = categorias.find(
-    (categoria) => categoria.id_categoria === producto.id_categoria
+    (categoria) => categoria.id_categoria === producto?.id_categoria
   );
 
   return (
@@ -74,15 +74,15 @@ function DetalleProducto() {
           </div>
           <div className={styles.viewGroup}>
             <label>Descuento 1:</label>
-            <div>${producto.descuento_uno}</div>
+            <div>{producto.descuento_uno}%</div>
           </div>
           <div className={styles.viewGroup}>
             <label>Descuento 2:</label>
-            <div>${producto.descuento_dos}</div>
+            <div>{producto.descuento_dos}%</div>
           </div>
           <div className={styles.viewGroup}>
             <label>Incremento:</label>
-            <div>${producto.incremento}</div>
+            <div>{producto.incremento}%</div>
           </div>
           <div className={styles.viewGroup}>
             <label>Precio Final:</label>
@@ -91,7 +91,9 @@ function DetalleProducto() {
           <div className={styles.viewGroup}>
             <label>Categoría:</label>
             <div>
-              {categorias && categoriaFiltrada && categoriaFiltrada.descripcion}
+              {categoriaFiltrada
+                ? categoriaFiltrada.descripcion
+                : "Sin definir"}
             </div>
           </div>
           <button

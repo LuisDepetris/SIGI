@@ -26,12 +26,17 @@ const EditarProducto = () => {
     getProducto();
   }, [id]);
 
-  const handleSave = (productoActualizado) => {
-    console.log("Producto actualizado:", productoActualizado);
-    navigate(`/Productos`);
+  const handleGuardar = (productoActualizado) => {
+    if(window.confirm("Esta seguro que desea editar este producto?")){
+      alert("Producto actualizado")
+      console.log("Producto actualizado:", productoActualizado);
+      navigate(`/Productos`);
+    }else{
+      alert("Se cancelo la operacion!");
+    }
   };
 
-  const handleCancel = () => {
+  const handleCancelar = () => {
     navigate(-1);
   };
 
@@ -41,8 +46,8 @@ const EditarProducto = () => {
       {producto && (
         <Formulario
           producto={producto}
-          onSave={handleSave}
-          onCancel={handleCancel}
+          onGuardar={handleGuardar}
+          onCancelar={handleCancelar}
         />
       )}
     </div>

@@ -1,4 +1,3 @@
-// GestionCategorias.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FormCategoria from "../components/FormCategoria";
@@ -8,6 +7,7 @@ const GestionCategorias = () => {
   const [categorias, setCategorias] = useState([]);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null);
   const [modoEdicion, setModoEdicion] = useState(false);
+  const [error, setError] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,7 +15,10 @@ const GestionCategorias = () => {
       const response = await fetch("http://localhost:3000/categorias");
       if (response.ok) {
         const data = await response.json();
-        setCategorias(data.categorias[0]);
+        const categoriasFiltradas = data.categorias.filter(
+          (cat) => cat.inhabilitado == 0
+        );
+        setCategorias(categoriasFiltradas);
       }
     };
     fetchCategorias();
@@ -30,6 +33,9 @@ const GestionCategorias = () => {
     if (response.ok) {
       const nueva = await response.json();
       setCategorias([...categorias, nueva.categoria]);
+    } else {
+      const { errores } = await response.json();
+      setError(errores);
     }
   };
 
@@ -65,7 +71,8 @@ const GestionCategorias = () => {
     <div className={styles.gestionCategorias}>
       <h2>Gestión de Categorías</h2>
       <FormCategoria
-        onSave={(descripcion) => {
+        errores={error}
+        onGuardar={(descripcion) => {
           modoEdicion
             ? editarCategoria(categoriaSeleccionada.id_categoria, descripcion)
             : agregarCategoria(descripcion);
@@ -77,19 +84,20 @@ const GestionCategorias = () => {
           setCategoriaSeleccionada(null);
         }}
       />
-      <ul>
+      <ul className={styles.formContainer}>
         {categorias.map((cat) => (
-          <li key={cat.id_categoria}>
+          <li key={cat.id_categoria} className={styles.formGroup}>
             {cat.descripcion}
             <button
               onClick={() => {
                 setCategoriaSeleccionada(cat);
                 setModoEdicion(true);
               }}
+              className={styles.saveButton}
             >
               Editar
             </button>
-            <button onClick={() => eliminarCategoria(cat.id_categoria)}>
+            <button onClick={() => eliminarCategoria(cat.id_categoria)} className={styles.cancelButton}>
               Eliminar
             </button>
           </li>

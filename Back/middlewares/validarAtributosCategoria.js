@@ -4,7 +4,7 @@ const validarAtributosCategoria = [
     body("descripcion")
     .trim()
     .notEmpty()
-    .withMessage("El campo descripcion no puede estar vacía")
+    .withMessage("No se puede cargar una categoria vacia")
     .bail()
     .isLength({ min: 2 })
     .withMessage("La categoria debe tener al menos 2 caracteres")
