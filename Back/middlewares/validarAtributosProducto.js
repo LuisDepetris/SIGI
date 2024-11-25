@@ -2,7 +2,7 @@
 import { body } from "express-validator";
 
 const validarAtributosProducto = (method) => [
-    body("nombreProducto").trim().notEmpty().withMessage("El nombre del producto no puede estar vacío").bail().isAlphanumeric('es-ES').withMessage("El nombre del producto debe ser alfanumérico").bail().isLength({ max: 100 }).withMessage("El nombre del producto no puede tener más de 100 caracteres").bail().matches(/[a-zA-Z]/).withMessage("El nombre del producto debe contener al menos una letra"),
+    body("nombreProducto").trim().notEmpty().withMessage("El nombre del producto no puede estar vacío").bail().isAlphanumeric('es-ES',{ignore:' '}).withMessage("El nombre del producto debe ser alfanumérico").bail().isLength({ max: 100 }).withMessage("El nombre del producto no puede tener más de 100 caracteres").bail().matches(/[a-zA-Z]/).withMessage("El nombre del producto debe contener al menos una letra"),
     body("stockActual").notEmpty().withMessage("El stock actual no puede estar vacío").bail().isInt({ min: 1 }).withMessage("El stock actual debe ser un número entero positivo"),
     body("precioLista").notEmpty().withMessage("El precio de lista no puede estar vacío").bail().isFloat({ min: 0.01 }).withMessage("El precio de debe ser un valor numerico positivo"),
     body("descuentoUno").trim().notEmpty().withMessage("El primer descuento no puede estar vacío").bail().isFloat({ min: 0 }).withMessage("El primer descuento no puede ser negativo"),
