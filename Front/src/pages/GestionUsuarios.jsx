@@ -113,6 +113,7 @@ const GestionUsuarios = () => {
       password: "",
       id_rol: 0
     })
+    setErrores({})
   }
   return (
     <div style={{ margin: "100px" }}>
