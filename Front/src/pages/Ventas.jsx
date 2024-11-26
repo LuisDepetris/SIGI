@@ -45,6 +45,10 @@ function Ventas() {
     navigate("/agregarProductoventas");
   };
 
+  const handleFormaPago = () => {
+    navigate("/GestionFormPagos");
+  };
+
   const handleVerDetalles = (id) => {
     navigate(`/ventas/${id}`);
   };
@@ -89,6 +93,9 @@ function Ventas() {
         <h2>Ventas</h2>
         <button className="btn-nuevo" onClick={handleAgregar}>
           Añadir Venta
+        </button>
+        <button className="btn-nuevo" onClick={handleFormaPago}>
+          Formas de Pago
         </button>
       </div>
 
