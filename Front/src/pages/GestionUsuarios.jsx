@@ -104,11 +104,7 @@ const GestionUsuarios = () => {
 
   const elegirRol = (e) => {
     const idActual = parseInt(e.target.value);
-    if (idActual === 0) {
-      alert("elija un rol")
-    } else {
       setUsuario({ ...usuario, id_rol: idActual })
-    }
   };
 
   const handleCancelar = () =>{
