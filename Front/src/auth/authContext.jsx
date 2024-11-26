@@ -76,7 +76,7 @@ export const AuthStatus = () => {
     return (
       <div>
         <span>No está conectado</span>
-        <button
+        {/* <button
           onClick={() =>
             navigate("/", {
               state: { from: location },
@@ -86,17 +86,26 @@ export const AuthStatus = () => {
           className="button-login"
         >
           Ingresar
-        </button>
+        </button> */}
       </div>
     );
+  }
+
+  const logOut = ()=>{
+    if (window.confirm("¿Esta seguro que desea salir?")){
+      logout(() => navigate("/", { replace: true }))
+    }
   }
 
   return (
     <div style={{ flexDirection: "row" }} className="user-info" >
       <span >{sesion.username}</span>
-      <button onClick={() => logout(() => navigate("/", { replace: true }))} className="btn-auth">
+      <button onClick={logOut} className="btn-auth">
         Salir
       </button>
+      {/* <button onClick={() => logout(() => navigate("/", { replace: true }))} className="btn-auth">
+        Salir
+      </button> */}
     </div>
   );
 };
