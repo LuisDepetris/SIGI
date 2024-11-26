@@ -9,6 +9,8 @@ import { validationResult } from "express-validator";
 const router = express.Router();
 
 router.get("/",
+  passport.authenticate("jwt", { session: false }),
+  validarPermisosUsuario(["Administrador"]),
   async (req, res) => {
     try {
       const sql = "CALL spVerRoles()";
@@ -21,8 +23,8 @@ router.get("/",
 });
 
 router.post("/", 
-  // passport.authenticate("jwt", { session: false }),
-  // validarPermisosUsuario(["Administrador"]),
+  passport.authenticate("jwt", { session: false }),
+  validarPermisosUsuario(["Administrador"]),
   validarAtributosRol(),
   async (req, res) => {
     const validacion = validationResult(req);
@@ -42,8 +44,8 @@ router.post("/",
 });
 
 router.put("/:id",
-  // passport.authenticate("jwt", { session: false }),
-  // validarPermisosUsuario(["Administrador"]),
+  passport.authenticate("jwt", { session: false }),
+  validarPermisosUsuario(["Administrador"]),
   validarId(),
   validarAtributosRol(),
   async (req, res) => {
@@ -66,8 +68,8 @@ router.put("/:id",
 });
 
 router.delete("/:id", 
-  // passport.authenticate("jwt", { session: false }),
-  // validarPermisosUsuario(["Administrador"]),
+  passport.authenticate("jwt", { session: false }),
+  validarPermisosUsuario(["Administrador"]),
   validarId(), 
   validarAtributosRol(),
   async (req, res) => {
