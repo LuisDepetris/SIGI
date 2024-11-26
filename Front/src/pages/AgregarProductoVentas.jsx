@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "../styles/AgregarProductoVentas.css";
 import { useAuth } from "../auth/authContext";
 
@@ -11,12 +11,13 @@ function AgregarProductoVentas() {
   const [detalleVenta, setDetalleVenta] = useState([]);
   const [productosVendidos, setProductosVendidos] = useState([]);
   const { sesion } = useAuth();
-  const [productosActualizados, setProductosActualizados] = useState([]); //en este arreglo voy a poner el nuevo arreglo con los productos vendidos. luego de eliminar
+  const [productosActualizados, setProductosActualizados] = useState([]);
   const navigate = useNavigate();
   const [formasPago, setFormasPago] = useState([]);
   const [formaPagoSeleccionada, setFormaPagoSeleccionada] = useState("");
-
   const { idVenta } = useParams();
+  const location = useLocation();
+  const { venta } = location.state || { venta: null };
 
   useEffect(() => {
     const obtenerProductos = async () => {
@@ -59,6 +60,12 @@ function AgregarProductoVentas() {
 
     obetenerFormasPago();
   }, []);
+
+  useEffect(() => {
+    if (venta && venta.productos) {
+      setProductosVendidos(venta.productos);
+    }
+  }, [venta]);
 
   const handleSeleccionarProducto = (idProducto) => {
     const producto = productos.find(
@@ -165,6 +172,7 @@ function AgregarProductoVentas() {
     setProductosVendidos(productosActualizados);
   };
 
+  console.log(productosVendidos);
   return (
     <div className="pagina-completa">
       <div className="detalle-ventas">
@@ -220,10 +228,10 @@ function AgregarProductoVentas() {
                   </button>
                 </td>
                 <td>{producto.id_producto}</td>
-                <td>{producto.nombre_producto}</td>
-                <td>${producto.precio_final}</td>
+                <td>{producto.nombreProducto}</td>
+                <td>${producto.precioFinal}</td>
                 <td>{producto.cantidad}</td>
-                <td>${producto.ventaSubTotal}</td>
+                <td>${producto.subTotal}</td>
               </tr>
             ))}
             {productosVendidos.length === 0 && (
