@@ -13,6 +13,7 @@ DROP PROCEDURE IF EXISTS spModificarProducto;
 DROP PROCEDURE IF EXISTS spNuevoProducto;
 DROP PROCEDURE IF EXISTS spEliminarProducto;
 DROP PROCEDURE IF EXISTS spVerUsuarios;
+DROP PROCEDURE IF EXISTS spVerUsuarioPorId;
 DROP PROCEDURE IF EXISTS spNuevoUsuario;
 DROP PROCEDURE IF EXISTS spModificarUsuario;
 DROP PROCEDURE IF EXISTS spEliminarUsuario;
@@ -296,6 +297,18 @@ BEGIN
 END//
 DELIMITER ;
 
+-- GET USUARIO BY ID
+DELIMITER //
+CREATE PROCEDURE spVerUsuarioPorId(
+   IN idUsuario INT)
+BEGIN 
+	SELECT username, id_rol
+    FROM usuarios
+    WHERE id_usuario = idUsuario AND inhabilitado = FALSE;
+END//
+DELIMITER ;
+
+-- INSERT USUARIO 
 DELIMITER //
 CREATE PROCEDURE spNuevoUsuario(
     IN username VARCHAR(50),
@@ -308,6 +321,7 @@ BEGIN
 END //
 DELIMITER ;
 
+-- UPDATE USUARIO
 DELIMITER //
 CREATE PROCEDURE spModificarUsuario(
     IN username VARCHAR(50),
@@ -322,6 +336,7 @@ BEGIN
 END //
 DELIMITER ;
 
+--SOFT DELETE USUARIO
 DELIMITER //
 CREATE PROCEDURE spEliminarUsuario(IN idUsuario INT)
 BEGIN 
