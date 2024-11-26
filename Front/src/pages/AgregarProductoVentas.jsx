@@ -13,6 +13,8 @@ function AgregarProductoVentas() {
   const { sesion } = useAuth();
   const [productosActualizados, setProductosActualizados] = useState([]); //en este arreglo voy a poner el nuevo arreglo con los productos vendidos. luego de eliminar
   const navigate = useNavigate();
+  const [formasPago, setFormasPago] = useState([]);
+  const [formaPagoSeleccionada, setFormaPagoSeleccionada] = useState("");
 
   const { idVenta } = useParams();
 
@@ -35,6 +37,27 @@ function AgregarProductoVentas() {
     };
 
     obtenerProductos();
+  }, []);
+
+  useEffect(() => {
+    const obetenerFormasPago = async () => {
+      try {
+        const respuesta = await fetch(`http://localhost:3000/pagos`);
+
+        if (!respuesta.ok) {
+          const errorData = await respuesta.json();
+          throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
+        }
+
+        const data = await respuesta.json();
+        setFormasPago(data.formasPago);
+      } catch (error) {
+        console.error("Error al obtener las forams de pago:", error);
+        setError("No se pudo cargar la información de las formas de pago.");
+      }
+    };
+
+    obetenerFormasPago();
   }, []);
 
   const handleSeleccionarProducto = (idProducto) => {
@@ -70,7 +93,7 @@ function AgregarProductoVentas() {
         body: JSON.stringify({
           ventaTotal: ventaTotal,
           cantidadTotal: cantidad,
-          idFormaPago: 1,
+          idFormaPago: formaPagoSeleccionada,
           productos: productosVendidos,
         }),
       });
@@ -151,9 +174,25 @@ function AgregarProductoVentas() {
         </p>
         <p>
           <strong>Fecha:</strong>{" "}
+          {new Date().toLocaleDateString("es-ES", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          })}
         </p>
         <div>
           <strong>Forma de Pago:</strong>
+          <select
+            value={formaPagoSeleccionada}
+            onChange={(e) => setFormaPagoSeleccionada(e.target.value)}
+          >
+            <option value="">Seleccione una Opción</option>
+            {formasPago.map((forma) => (
+              <option key={forma.id_forma_pago} value={forma.id_forma_pago}>
+                {forma.descripcion}
+              </option>
+            ))}
+          </select>
         </div>
         <p>
           <strong>Cantidad Total:</strong> {productosVendidos.length}

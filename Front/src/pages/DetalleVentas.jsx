@@ -36,7 +36,7 @@ function DetalleVentas() {
       }
     };
     obtenerDetalleVenta();
-  }, []);
+  }, [editando]);
 
   useEffect(() => {
     const obetenerFormasPago = async () => {
@@ -130,7 +130,6 @@ function DetalleVentas() {
       );
 
       setEliminando(true);
-
       alert("Producto eliminado correctamente.");
     } catch (error) {
       console.error("Error al eliminar la venta:", error);
@@ -170,6 +169,9 @@ function DetalleVentas() {
         const errorData = await respuesta.json();
         throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
       }
+
+      alert("Venta modificada con éxito");
+      setEditando(false);
 
       if (!editando) {
         alert("Venta modificada con éxito");
