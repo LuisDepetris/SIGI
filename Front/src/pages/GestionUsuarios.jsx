@@ -13,6 +13,7 @@ const GestionUsuarios = () => {
       id_rol: 0
   })
   const { sesion } = useAuth();
+  const [errores, setErrores] = useState({});
 
   const getUsuarios = async () => {
     const response = await fetch("http://localhost:3000/usuarios", {
@@ -93,10 +94,11 @@ const GestionUsuarios = () => {
         password: "",
         id_rol: 0
       })
+      setErrores({})
       getUsuarios();
     } else {
       const { errores } = await response.json();
-      console.log(errores)
+      setErrores(errores);
     }
   }
 
@@ -121,7 +123,7 @@ const GestionUsuarios = () => {
       <h2>Gestion de Usuarios</h2>
       <form className="formulario-usuario">
         <div className="form-group">
-          <label>Username:</label>
+          <label>Nombre de Usuario:</label>
           <input
             type="text"
             value={usuario.username}
@@ -129,9 +131,10 @@ const GestionUsuarios = () => {
               setUsuario({ ...usuario, username: e.target.value })
             }
           />
+          {errores.username && <div style={{color: "red"}}>{errores.username.msg}</div>}
         </div>
         <div className="form-group">
-          <label>Password:</label>
+          <label>Contraseña:</label>
           <input
             type="password"
             value={usuario.password}
@@ -139,10 +142,11 @@ const GestionUsuarios = () => {
               setUsuario({ ...usuario, password: e.target.value })
             }
           />
+          {errores.password && <div style={{color: "red"}}>{errores.password.msg}</div>}
         </div>
         <div className="form-group">
           <label>Rol:</label>
-          <select name="rol" value={usuario.id_rol} onChange={elegirRol}>
+          <select name="idRol" value={usuario.id_rol} onChange={elegirRol}>
             <option value="0">Selecciona un rol</option>
             {roles.map((rol) => (
               <option key={rol.id_rol} value={rol.id_rol}>
@@ -150,6 +154,7 @@ const GestionUsuarios = () => {
               </option>
             ))}
           </select>
+          {errores.idRol && <div style={{color: "red"}}>{errores.idRol.msg}</div>}
         </div>
         <div className="button-group">
           <button type="button" className="boton cancelar" onClick={handleCancelar}>
