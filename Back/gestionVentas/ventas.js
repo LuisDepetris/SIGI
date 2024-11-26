@@ -52,7 +52,7 @@ router.get("/:id/ventas_producto",
       ventaProductos[0].forEach((producto) => {
         ventaYProductos.productos.push({
           idVentaProducto: producto.id_venta_producto,
-          idProducto: producto.id_producto,
+          id_producto: producto.id_producto,
           nombreProducto: producto.nombre_producto,
           stockActual: producto.stock_actual,
           precioLista: producto.precio_lista,
