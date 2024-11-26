@@ -17,7 +17,7 @@ router.get("/",
       const sql = "CALL spVerUsuarios";
       const [usuarios] = await db.execute(sql);
 
-      return res.status(200).send({ usuarios });
+      return res.status(200).send({ usuarios: usuarios[0] });
     } catch (error) {
       return res.status(500).send({ error: "Error al traer usuarios" });
     }
