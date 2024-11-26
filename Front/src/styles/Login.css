@@ -48,7 +48,7 @@
   background-color: #005bb5; /* Azul más oscuro al pasar el cursor */
 }
 
-p {
+.errorUsuario {
   color: red;
   font-size: 0.875rem; /* Tamaño de fuente más pequeño */
   margin-top: 1rem;
@@ -67,7 +67,6 @@ p {
 .btn-auth:hover {
   background-color: #d81b32; /* Azul más oscuro al pasar el cursor */
 }
-
 
 .user-info span {
   font-size: 20px;
