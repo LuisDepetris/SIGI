@@ -21,7 +21,7 @@ router.get("/", async (req, res) =>{
 
 router.put("/:id", 
     passport.authenticate("jwt", { session: false }),
-    validarPermisosUsuario(["Administrador, Editor"]),
+    validarPermisosUsuario(["Administrador", "Editor"]),
     validarId(), 
     validarAtributosCategoria, 
     async (req, res) =>{
@@ -51,7 +51,7 @@ router.put("/:id",
 
 router.post("/", 
     passport.authenticate("jwt", { session: false }),
-    validarPermisosUsuario(["Administrador, Editor"]),
+    validarPermisosUsuario(["Administrador", "Editor"]),
     validarAtributosCategoria, 
     async (req, res) =>{
         const validacion = validationResult(req);
@@ -75,7 +75,7 @@ router.post("/",
 
 router.delete("/:id",
     passport.authenticate("jwt", { session: false }),
-    validarPermisosUsuario(["Administrador, Editor"]),
+    validarPermisosUsuario(["Administrador", "Editor"]),
     validarId(), 
     async (req, res) =>{
         const validacion = validationResult(req);

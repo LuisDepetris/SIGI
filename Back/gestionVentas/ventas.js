@@ -122,7 +122,7 @@ router.post("/",
 
 router.put("/:id", 
   passport.authenticate("jwt", { session: false }),
-  validarPermisosUsuario(["Administrador, Editor"]),
+  validarPermisosUsuario(["Administrador", "Editor"]),
   validarId(), 
   validarAtributosVenta(), 
   async (req, res) => {
@@ -192,7 +192,7 @@ router.delete("/:id",
 
 router.post("/:id/ventas_producto", 
   passport.authenticate("jwt", { session: false }),
-  validarPermisosUsuario(["Administrador, Editor"]),
+  validarPermisosUsuario(["Administrador", "Editor"]),
   validarId(), 
   validarAtributosVentaProducto(), 
   async (req, res) => {
@@ -233,7 +233,7 @@ router.post("/:id/ventas_producto",
 
 router.delete("/:id/ventas_producto/", 
   passport.authenticate("jwt", { session: false }),
-  validarPermisosUsuario(["Administrador, Editor"]),
+  validarPermisosUsuario(["Administrador", "Editor"]),
   validarAtributosVentaProducto(), 
   async (req, res) => {
     const validacion = validationResult(req);

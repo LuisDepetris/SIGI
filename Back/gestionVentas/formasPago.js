@@ -42,7 +42,7 @@ router.post("/",
 
 router.put("/:id", 
   passport.authenticate("jwt", { session: false }),
-  validarPermisosUsuario(["Administrador, Editor"]),
+  validarPermisosUsuario(["Administrador", "Editor"]),
   validarId(), 
   validarAtributosFormasPago(), 
   async (req, res) =>{

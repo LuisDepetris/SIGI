@@ -4,9 +4,9 @@ import validarPaginacionProductos from "../middlewares/validarPaginacionProducto
 import validarId from "../middlewares/validarId.js";
 import validarAtributosProducto from "../middlewares/validarAtributosProducto.js";
 import { validationResult } from "express-validator";
-const router = express.Router();
 import passport from "passport";
 import validarPermisosUsuario from "../middlewares/validarPermisosUsuario.js";
+const router = express.Router();
 
 router.get("/", 
   validarPaginacionProductos(), 
@@ -74,7 +74,7 @@ router.get("/:id",
 router.put(
   "/:id",
   passport.authenticate("jwt", { session: false }),
-  validarPermisosUsuario(["Administrador, Editor"]),
+  validarPermisosUsuario(["Administrador", "Editor"]),
   validarId(),
   validarAtributosProducto("PUT"), 
   async (req, res) => {
@@ -134,7 +134,7 @@ router.put(
 
 router.post("/", 
   passport.authenticate("jwt", { session: false }),
-  validarPermisosUsuario(["Administrador, Editor"]),
+  validarPermisosUsuario(["Administrador", "Editor"]),
   validarAtributosProducto("POST"), 
   async (req, res) => {
     const validacion = validationResult(req);
