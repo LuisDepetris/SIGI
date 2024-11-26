@@ -85,6 +85,7 @@ function DetalleVentas() {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${sesion.token}`,
           },
           body: JSON.stringify({
             idVentaProducto: idVentaProducto,
@@ -157,6 +158,7 @@ function DetalleVentas() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${sesion.token}`,
         },
         body: JSON.stringify({
           ventaTotal: ventaTotal,

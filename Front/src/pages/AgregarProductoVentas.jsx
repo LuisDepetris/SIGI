@@ -17,7 +17,6 @@ function AgregarProductoVentas() {
   const [formaPagoSeleccionada, setFormaPagoSeleccionada] = useState("");
   const { idVenta } = useParams();
   const location = useLocation();
-  const { venta } = location.state || { venta: null };
 
   useEffect(() => {
     const obtenerProductos = async () => {
@@ -60,12 +59,6 @@ function AgregarProductoVentas() {
 
     obetenerFormasPago();
   }, []);
-
-  useEffect(() => {
-    if (venta && venta.productos) {
-      setProductosVendidos(venta.productos);
-    }
-  }, [venta]);
 
   const handleSeleccionarProducto = (idProducto) => {
     const producto = productos.find(
@@ -228,10 +221,10 @@ function AgregarProductoVentas() {
                   </button>
                 </td>
                 <td>{producto.id_producto}</td>
-                <td>{producto.nombreProducto}</td>
-                <td>${producto.precioFinal}</td>
+                <td>{producto.nombre_producto}</td>
+                <td>${producto.precio_final}</td>
                 <td>{producto.cantidad}</td>
-                <td>${producto.subTotal}</td>
+                <td>${producto.ventaSubTotal}</td>
               </tr>
             ))}
             {productosVendidos.length === 0 && (
