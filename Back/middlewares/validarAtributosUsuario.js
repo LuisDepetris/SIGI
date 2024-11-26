@@ -32,7 +32,7 @@ const validarAtributosUsuario = () => [
     .withMessage("El id del rol debe ser un número entero")
     .bail()
     .custom((value) => value > 0)
-    .withMessage("Debe seleccionar una categoria")
+    .withMessage("Debe seleccionar un rol de usuario")
 ];
 
 export default validarAtributosUsuario;
