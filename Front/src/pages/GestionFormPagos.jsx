@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FormCategoria from "../components/FormCategoria";
-import styles from "../styles/GestionCategoria.module.css";
+import "../styles/GestionCategoria.css";
 
 const GestionFormPagos = () => {
   const [formasPago, setFormasPago] = useState([]);
@@ -68,7 +68,7 @@ const GestionFormPagos = () => {
   };
 
   return (
-    <div className={styles.gestionCategorias}>
+    <div className='gestionCategorias'>
       <h2>Gestión de Formas de Pago</h2>
       <FormCategoria
         errores={error}
@@ -85,20 +85,20 @@ const GestionFormPagos = () => {
           setFormaSeleccionada(null);
         }}
       />
-      <ul className={styles.formContainer}>
+      <ul className='formContainer ul-categoria'>
         {formasPago.map((pago) => (
-          <li key={pago.id_forma_pago} className={styles.formGroup}>
+          <li key={pago.id_forma_pago} className='formGroup'>
             {pago.descripcion}
             <button
               onClick={() => {
                 setFormaSeleccionada(pago);
                 setModoEdicion(true);
               }}
-              className={styles.saveButton}
+              className='saveButton button-categoria'
             >
               Editar
             </button>
-            <button onClick={() => eliminarFormaPago(pago.id_forma_pago)} className={styles.cancelButton}>
+            <button onClick={() => eliminarFormaPago(pago.id_forma_pago)} className='cancelButton button-categoria'>
               Eliminar
             </button>
           </li>

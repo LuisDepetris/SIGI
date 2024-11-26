@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "../styles/Formulario.module.css";
+import "../styles/Formulario.css";
 import { useAuth } from "../auth/authContext";
 
 const Formulario = ({ producto, onGuardar, onCancelar }) => {
@@ -145,15 +145,15 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
   };
 
   return (
-    <form className={styles.formContainer} onSubmit={handleCargar}>
+    <form className='formContainer' onSubmit={handleCargar}>
       {data.id_producto > 0 && (
-        <div className={styles.formGroup}>
+        <div className='formGroup'>
           <label>ID Producto</label>
           <p>{data.id_producto}</p>
         </div>
       )}
 
-      <div className={styles.formGroup}>
+      <div className='formGroup'>
         <label>Nombre del Producto</label>
         <input
           type="text"
@@ -165,7 +165,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
           <div style={{ color: "red" }}>{error.nombreProducto.msg}</div>
         )}
       </div>
-      <div className={styles.formGroup}>
+      <div className='formGroup'>
         <label>Stock</label>
         <input
           type="text"
@@ -177,7 +177,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
           <div style={{ color: "red" }}>{error.stockActual.msg}</div>
         )}
       </div>
-      <div className={styles.formGroup}>
+      <div className='formGroup'>
         <label>Precio Lista</label>
         <input
           type="text"
@@ -189,7 +189,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
           <div style={{ color: "red" }}>{error.precioLista.msg}</div>
         )}
       </div>
-      <div className={styles.formGroup}>
+      <div className='formGroup'>
         <label>Descuento uno</label>
         <input
           type="text"
@@ -201,7 +201,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
           <div style={{ color: "red" }}>{error.descuentoUno.msg}</div>
         )}
       </div>
-      <div className={styles.formGroup}>
+      <div className='formGroup'>
         <label>Descuento dos</label>
         <input
           type="text"
@@ -213,7 +213,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
           <div style={{ color: "red" }}>{error.descuentoDos.msg}</div>
         )}
       </div>
-      <div className={styles.formGroup}>
+      <div className='formGroup'>
         <label>Incremento</label>
         <input
           type="text"
@@ -225,7 +225,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
           <div style={{ color: "red" }}>{error.incremento.msg}</div>
         )}
       </div>
-      <div className={styles.formGroup}>
+      <div className='formGroup'>
         <label>Precio Sugerido</label>
         <input
           type="text"
@@ -234,7 +234,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
           readOnly
         />
       </div>
-      <div className={styles.formGroup}>
+      <div className='formGroup'>
         <label>Precio Final</label>
         <input
           type="text"
@@ -246,7 +246,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
           <div style={{ color: "red" }}>{error.precioFinal.msg}</div>
         )}
       </div>
-      <div className={styles.formGroup}>
+      <div className='formGroup'>
         <label>Categoría</label>
         <select
           name="idCategoria"
@@ -265,17 +265,17 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
           <div style={{ color: "red" }}>{error.idCategoria.msg}</div>
         )}
       </div>
-      <div className={styles.buttonGroup}>
+      <div className='buttonGroup'>
         <button
           type="button"
           onClick={onCancelar}
-          className={`${styles.button} ${styles.cancelButton}`}
+          className='button cancelButton'
         >
           Cancelar
         </button>
         <button
           type="submit"
-          className={`${styles.button} ${styles.saveButton}`}
+          className='button saveButton'
         >
           {data.id_producto === 0 ? "Guardar y Cerrar" : "Editar y Cerrar"}
         </button>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FormCategoria from "../components/FormCategoria";
-import styles from "../styles/GestionCategoria.module.css";
+import "../styles/GestionCategoria.css";
 import { useAuth } from "../auth/authContext";
 
 const GestionCategorias = () => {
@@ -79,7 +79,7 @@ const GestionCategorias = () => {
   };
 
   return (
-    <div className={styles.gestionCategorias}>
+    <div className='gestionCategorias'>
       <h2>Gestión de Categorías</h2>
       <FormCategoria
         errores={error}
@@ -96,20 +96,20 @@ const GestionCategorias = () => {
           setCategoriaSeleccionada(null);
         }}
       />
-      <ul className={styles.formContainer}>
+      <ul className='formContainer ul-categoria'>
         {categorias.map((cat) => (
-          <li key={cat.id_categoria} className={styles.formGroup}>
+          <li key={cat.id_categoria} className='formGroup'>
             {cat.descripcion}
             <button
               onClick={() => {
                 setCategoriaSeleccionada(cat);
                 setModoEdicion(true);
               }}
-              className={styles.saveButton}
+              className='saveButton button-categoria'
             >
               Editar
             </button>
-            <button onClick={() => eliminarCategoria(cat.id_categoria)} className={styles.cancelButton}>
+            <button onClick={() => eliminarCategoria(cat.id_categoria)} className='cancelButton button-categoria'>
               Eliminar
             </button>
           </li>

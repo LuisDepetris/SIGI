@@ -3,15 +3,16 @@
   max-width: 500px;
   margin: 0 auto;
 }
-ul {
+.ul-categoria {
   list-style: none;
   padding: 0;
 }
-button {
+.button-categoria {
   margin-left: 5px;
 }
 .formContainer {
-  max-width: 600px;
+  /* max-width: 600px; */
+  width: 400px;
   margin: 0 auto;
   padding: 20px;
   background-color: #f9f9f9;
