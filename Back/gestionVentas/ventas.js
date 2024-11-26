@@ -257,8 +257,8 @@ router.delete("/:id/ventas_producto/",
 
       return res.status(201).send({ id: { idVentaProducto } });
     } catch (error) {
-      console.error("Error al eliminado el producto:", error.message);
-      return res.status(500).send({ error: "Error al eliminado el producto." });
+      console.error("Error al eliminar el producto de la venta:", error.message);
+      return res.status(500).send({ error: "Error al eliminar el producto de la venta." });
     }
 });
 
