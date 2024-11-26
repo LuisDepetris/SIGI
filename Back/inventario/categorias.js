@@ -13,7 +13,7 @@ router.get("/", async (req, res) =>{
         const sql = "CALL spVerCategorias";
         const [categorias] = await db.execute(sql);
 
-        return res.status(200).send({ categorias });
+        return res.status(200).send({ categorias: categorias[0] });
       } catch (error) {
         return res.status(500).send({ error: "Error al traer categorias" });
       }

@@ -28,12 +28,12 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
       if (response.ok) {
         const result = await response.json();
 
-        const categoriasHabilitadas = result.categorias[0].filter(
+        const categoriasHabilitadas = result.categorias.filter(
           (cat) => cat.inhabilitado === 0
         );
 
         if (data.id_producto !== 0) {
-          const categoriaActual = result.categorias[0].find(
+          const categoriaActual = result.categorias.find(
             (cat) => cat.id_categoria === data.id_categoria
           );
 
@@ -168,7 +168,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
       <div className={styles.formGroup}>
         <label>Stock</label>
         <input
-          type="number"
+          type="text"
           name="stock_actual"
           value={data.stock_actual}
           onChange={handleChange}
@@ -180,7 +180,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
       <div className={styles.formGroup}>
         <label>Precio Lista</label>
         <input
-          type="number"
+          type="text"
           name="precio_lista"
           value={data.precio_lista}
           onChange={handleChange}
@@ -192,7 +192,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
       <div className={styles.formGroup}>
         <label>Descuento uno</label>
         <input
-          type="number"
+          type="text"
           name="descuento_uno"
           value={data.descuento_uno}
           onChange={handleChange}
@@ -204,7 +204,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
       <div className={styles.formGroup}>
         <label>Descuento dos</label>
         <input
-          type="number"
+          type="text"
           name="descuento_dos"
           value={data.descuento_dos}
           onChange={handleChange}
@@ -216,7 +216,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
       <div className={styles.formGroup}>
         <label>Incremento</label>
         <input
-          type="number"
+          type="text"
           name="incremento"
           value={data.incremento}
           onChange={handleChange}
@@ -228,7 +228,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
       <div className={styles.formGroup}>
         <label>Precio Sugerido</label>
         <input
-          type="number"
+          type="text"
           name="precio_sugerido"
           value={precioSugerido}
           readOnly
@@ -237,7 +237,7 @@ const Formulario = ({ producto, onGuardar, onCancelar }) => {
       <div className={styles.formGroup}>
         <label>Precio Final</label>
         <input
-          type="number"
+          type="text"
           name="precio_final"
           value={data.precio_final}
           onChange={handleChange}

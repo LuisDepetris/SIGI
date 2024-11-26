@@ -55,7 +55,7 @@ function Productos() {
         }
 
         const data = await respuesta.json();
-        setCategorias(data.categorias[0]);
+        setCategorias(data.categorias);
       } catch (error) {
         console.error("Error al obtener las categorias:", error);
         alert("No se pudo obtener las categorias");
@@ -110,6 +110,10 @@ function Productos() {
     navigate("agregar");
   };
 
+  const nuevaCategoria = () => {
+    navigate("categorias");
+  };
+
   const handleSort = (columnaClickeada) => {
     if (sort === columnaClickeada) {
       setOrder(order === "ASC" ? "DESC" : "ASC");
@@ -125,12 +129,19 @@ function Productos() {
     }
   };
 
+  const handleLimitChange = (num) => {
+    setLimite(num);
+  };
+
   return (
     <div className="productos">
       <div className="header-productos">
         <h2>Productos</h2>
         <button className="btn-nuevo" onClick={handleAgregar}>
           Añadir Nuevo
+        </button>
+        <button className="btn-nuevo" onClick={nuevaCategoria}>
+          Categorias
         </button>
       </div>
 
@@ -139,6 +150,7 @@ function Productos() {
         paginaActual={paginaActual}
         totalPaginas={totalPaginas}
         onPaginaChange={(nuevaPagina) => setPaginaActual(nuevaPagina)}
+        onLimitChange={handleLimitChange}
         registrosVisibles={`Registros ${registrosInicio}-${registrosFin} de ${totalProductos}`}
       />
 

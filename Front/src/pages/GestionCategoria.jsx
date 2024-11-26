@@ -12,17 +12,18 @@ const GestionCategorias = () => {
   const navigate = useNavigate();
   const { sesion } = useAuth();
 
+  const fetchCategorias = async () => {
+    const response = await fetch("http://localhost:3000/categorias");
+    if (response.ok) {
+      const data = await response.json();
+      const categoriasFiltradas = data.categorias.filter(
+        (cat) => cat.inhabilitado == 0
+      );
+      setCategorias(categoriasFiltradas);
+    }
+  };
+  
   useEffect(() => {
-    const fetchCategorias = async () => {
-      const response = await fetch("http://localhost:3000/categorias");
-      if (response.ok) {
-        const data = await response.json();
-        const categoriasFiltradas = data.categorias[0].filter(
-          (cat) => cat.inhabilitado == 0
-        );
-        setCategorias(categoriasFiltradas);
-      }
-    };
     fetchCategorias();
   }, []);
 
@@ -36,8 +37,7 @@ const GestionCategorias = () => {
       body: JSON.stringify({ descripcion: nuevaCategoria }),
     });
     if (response.ok) {
-      const nueva = await response.json();
-      setCategorias([...categorias, nueva.categoria]);
+      fetchCategorias()
     } else {
       const { errores } = await response.json();
       setError(errores);
@@ -89,6 +89,7 @@ const GestionCategorias = () => {
             : agregarCategoria(descripcion);
         }}
         categoria={modoEdicion ? categoriaSeleccionada : null}
+        tipoEntidad="categoria"
         onCancel={() => {
           navigate(-1);
           setModoEdicion(false);

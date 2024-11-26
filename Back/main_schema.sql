@@ -13,7 +13,9 @@ DROP PROCEDURE IF EXISTS spModificarProducto;
 DROP PROCEDURE IF EXISTS spNuevoProducto;
 DROP PROCEDURE IF EXISTS spEliminarProducto;
 DROP PROCEDURE IF EXISTS spVerUsuarios;
+DROP PROCEDURE IF EXISTS spVerUsuarioPorId;
 DROP PROCEDURE IF EXISTS spNuevoUsuario;
+DROP PROCEDURE IF EXISTS spModificarUsuario;
 DROP PROCEDURE IF EXISTS spEliminarUsuario;
 DROP PROCEDURE IF EXISTS spVerCategorias;
 DROP PROCEDURE IF EXISTS spNuevaCategoria;
@@ -27,25 +29,33 @@ DROP PROCEDURE IF EXISTS spEliminarVenta;
 DROP PROCEDURE IF EXISTS spAgregarProductoAVenta;
 DROP PROCEDURE IF EXISTS spEliminarProductoDeUnaVenta;
 DROP PROCEDURE IF EXISTS spModificarStockActual;
-DROP PROCEDURE IF EXISTS spVerFormasPago;
 DROP PROCEDURE IF EXISTS spObtenerProductosDeVenta;
+DROP PROCEDURE IF EXISTS spVerRoles;
+DROP PROCEDURE IF EXISTS spCrearRol;
+DROP PROCEDURE IF EXISTS spModificarRol;
+DROP PROCEDURE IF EXISTS spEliminarRol;
+DROP PROCEDURE IF EXISTS spVerFormasPago;
+DROP PROCEDURE IF EXISTS spNuevaFormaPago;
+DROP PROCEDURE IF EXISTS spModificarFormaPago;
+DROP PROCEDURE IF EXISTS spEliminarFormaPago;
 
 -- CREAR TABLAS
 
 CREATE TABLE `roles` (
   `id_rol` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(50) NOT NULL,
+  `inhabilitado` BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (`id_rol`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `usuarios` (
   `id_usuario` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(50) NOT NULL,
+  `username` varchar(50) NOT NULL,
   `password` varchar(60) NOT NULL,
   `id_rol` int NOT NULL,
   `inhabilitado` BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (`id_usuario`),
-  UNIQUE KEY `email_UNIQUE` (`email`),
+  UNIQUE KEY `username_UNIQUE` (`username`),
   UNIQUE KEY `password_UNIQUE` (`password`),
   KEY `id_rol` (`id_rol`),
   CONSTRAINT `id_rol` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id_rol`)
@@ -61,6 +71,7 @@ CREATE TABLE `categorias_producto` (
 CREATE TABLE `formas_pago` (
   `id_forma_pago` int NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(50) NOT NULL,
+  `inhabilitado` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id_forma_pago`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -131,7 +142,7 @@ INSERT INTO roles (nombre) VALUES
 ('Editor'),
 ('Lector');
 
-INSERT INTO usuarios (email, password, id_rol) VALUES
+INSERT INTO usuarios (username, password, id_rol) VALUES
 ('admin@example.com', 'password123', 1),
 ('vendedor@example.com', 'password456', 2),
 ('cliente@example.com', 'password789', 3);
@@ -286,18 +297,46 @@ BEGIN
 END//
 DELIMITER ;
 
+-- GET USUARIO BY ID
+DELIMITER //
+CREATE PROCEDURE spVerUsuarioPorId(
+   IN idUsuario INT)
+BEGIN 
+	SELECT username, id_rol
+    FROM usuarios
+    WHERE id_usuario = idUsuario AND inhabilitado = FALSE;
+END//
+DELIMITER ;
+
+-- INSERT USUARIO 
 DELIMITER //
 CREATE PROCEDURE spNuevoUsuario(
-    IN email VARCHAR(50),
+    IN username VARCHAR(50),
     IN password VARCHAR(60),
     IN idRol INT
 )
 BEGIN
-    INSERT INTO usuarios (email, password, id_rol)
-    VALUES (email, password, idRol);
+    INSERT INTO usuarios (username, password, id_rol)
+    VALUES (username, password, idRol);
 END //
 DELIMITER ;
 
+-- UPDATE USUARIO
+DELIMITER //
+CREATE PROCEDURE spModificarUsuario(
+    IN username VARCHAR(50),
+    IN password VARCHAR(60),
+    IN idRol INT,
+    IN idUsuario INT
+)
+BEGIN
+    UPDATE usuarios
+        SET username = username, password = password, id_rol = idRol
+    WHERE id_usuario = idUsuario;
+END //
+DELIMITER ;
+
+--SOFT DELETE USUARIO
 DELIMITER //
 CREATE PROCEDURE spEliminarUsuario(IN idUsuario INT)
 BEGIN 
@@ -418,6 +457,18 @@ BEGIN
 END//
 DELIMITER ;
 
+-- SP Obtener productos asociados a una venta
+DELIMITER //
+CREATE PROCEDURE spObtenerProductosDeVenta(
+    IN idVenta INT
+)
+BEGIN
+    SELECT id_producto, cantidad
+    FROM ventas_producto
+    WHERE id_venta = idVenta;
+END //
+DELIMITER ;
+
 -- INSERT VENTAS_PRODUCTO
 DELIMITER //
 CREATE PROCEDURE spAgregarProductoAVenta(
@@ -466,22 +517,85 @@ BEGIN
 END//
 DELIMITER ;
 
--- SP FORMAS PAGO
+-- SP GET FORMAS PAGO
 DELIMITER //
-CREATE PROCEDURE `spVerFormasPago`()
+CREATE PROCEDURE spVerFormasPago()
 BEGIN
 	SELECT * FROM formas_pago;
 END//
 DELIMITER ;
 
--- SP Para obtener productos asociados a una venta
+-- SP POST FORMAS PAGO
 DELIMITER //
-CREATE PROCEDURE spObtenerProductosDeVenta(
-    IN idVenta INT
+CREATE PROCEDURE `spNuevaFormaPago`(
+	IN descripcion VARCHAR(50)
 )
 BEGIN
-    SELECT id_producto, cantidad
-    FROM ventas_producto
-    WHERE id_venta = idVenta;
+	INSERT INTO formas_pago (descripcion)
+    VALUES (descripcion);
+END//
+DELIMITER ;
+
+-- SP PUT FORMAS PAGO
+DELIMITER //
+CREATE PROCEDURE `spModificarFormaPago`(
+	IN idFormaPago INT,
+    IN descripcion VARCHAR(50)
+)
+BEGIN
+	UPDATE formas_pago
+	SET descripcion = descripcion
+	WHERE id_forma_pago = idFormaPago;
+END//
+DELIMITER ;
+
+-- SP DELETE FORMAS PAGO
+DELIMITER //
+CREATE PROCEDURE `spEliminarFormaPago`(
+	IN idFormaPago INT
+)
+BEGIN
+	UPDATE formas_pago SET inhabilitado = TRUE WHERE id_forma_pago = idFormaPago;
+END//
+DELIMITER ;
+
+-- SP GET ROLES
+DELIMITER //
+CREATE PROCEDURE spVerRoles()
+BEGIN
+	SELECT * FROM roles
+    WHERE inhabilitado = FALSE;
+END//
+DELIMITER ;
+
+-- SP INSERT ROL
+DELIMITER //
+CREATE PROCEDURE spCrearRol(
+    IN nombre VARCHAR(50)
+)
+BEGIN
+	INSERT INTO roles (nombre)
+    VALUES (nombre);
+END//
+DELIMITER ;
+
+-- SP UPDATE ROL
+DELIMITER //
+CREATE PROCEDURE spModificarRol(
+    IN nombre VARCHAR(50),
+    IN idRol INT
+)
+BEGIN
+    UPDATE roles
+        SET nombre = nombre
+    WHERE id_rol = idRol;
 END //
+DELIMITER ;
+
+--SP DELETE ROL
+DELIMITER //
+CREATE PROCEDURE spEliminarRol(IN idRol INT)
+BEGIN 
+		UPDATE roles SET inhabilitado = TRUE WHERE id_rol = idRol;
+END//
 DELIMITER ;
