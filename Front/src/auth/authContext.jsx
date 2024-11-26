@@ -1,5 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import "../styles/Login.css";
+
 
 const AuthContext = createContext();
 
@@ -81,6 +83,7 @@ export const AuthStatus = () => {
               replace: true,
             })
           }
+          className="button-login"
         >
           Ingresar
         </button>
@@ -89,9 +92,9 @@ export const AuthStatus = () => {
   }
 
   return (
-    <div style={{ flexDirection: "row" }}>
-      <span>{sesion.username}</span>
-      <button onClick={() => logout(() => navigate("/", { replace: true }))}>
+    <div style={{ flexDirection: "row" }} className="user-info" >
+      <span >{sesion.username}</span>
+      <button onClick={() => logout(() => navigate("/", { replace: true }))} className="btn-auth">
         Salir
       </button>
     </div>
