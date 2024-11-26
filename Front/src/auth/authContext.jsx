@@ -14,11 +14,11 @@ export const AuthProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("sesion")) || null
   );
 
-  const login = async (email, password, ok, error) => {
+  const login = async (username, password, ok, error) => {
     const response = await fetch("http://localhost:3000/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username, password }),
     });
     if (!response.ok) {
       error();
@@ -90,7 +90,7 @@ export const AuthStatus = () => {
 
   return (
     <div style={{ flexDirection: "row" }}>
-      <span>{sesion.email}</span>
+      <span>{sesion.username}</span>
       <button onClick={() => logout(() => navigate("/", { replace: true }))}>
         Salir
       </button>
