@@ -15,6 +15,7 @@ import { AuthPage, AuthRol } from "./auth/authContext";
 import GestionUsuarios from "./pages/GestionUsuarios";
 import Login from "./pages/Login";
 import NoPermitido from "./pages/NoPermitido";
+import EditarProductoVentas from "./pages/EditarProductoVenta";
 
 function App() {
   return (
@@ -103,6 +104,16 @@ function App() {
             <AuthPage>
               <AuthRol roles={["Administrador", "Editor", "Lector"]}>
                 <AgregarProductoVentas />
+              </AuthRol>
+            </AuthPage>
+          }
+        />
+        <Route
+          path="/EditarProductoVentas"
+          element={
+            <AuthPage>
+              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
+                <EditarProductoVentas />
               </AuthRol>
             </AuthPage>
           }

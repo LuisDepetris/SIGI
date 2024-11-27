@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "../styles/DetalleVentas.css";
 import { useAuth } from "../auth/authContext";
 
@@ -186,7 +186,7 @@ function DetalleVentas() {
   };
 
   const handleAgregar = () => {
-    navigate("/agregarProductoVentas", { state: { venta } });
+    navigate("/EditarProductoVentas", { state: { venta } });
   };
 
   const elegirMedioPago = (e) => {

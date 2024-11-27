@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "../styles/AgregarProductoVentas.css";
 import { useAuth } from "../auth/authContext";
+import Ventas from "./Ventas";
 
-function AgregarProductoVentas() {
+function EditarProductoVentas() {
   const [productos, setProductos] = useState([]);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [cantidad, setCantidad] = useState(1);
@@ -15,7 +16,9 @@ function AgregarProductoVentas() {
   const navigate = useNavigate();
   const [formasPago, setFormasPago] = useState([]);
   const [formaPagoSeleccionada, setFormaPagoSeleccionada] = useState("");
-  const { idVenta } = useParams();
+  const location = useLocation();
+
+  const { venta } = location.state || {};
 
   useEffect(() => {
     const obtenerProductos = async () => {
@@ -59,10 +62,17 @@ function AgregarProductoVentas() {
     obetenerFormasPago();
   }, []);
 
-  const handleSeleccionarProducto = (idProducto) => {
+  useEffect(() => {
+    if (venta && venta.productos) {
+      setProductosVendidos(venta.productos);
+    }
+  }, [venta]);
+
+  const handleSeleccionarProducto = (id_producto) => {
     const producto = productos.find(
-      (prod) => prod.id_producto === parseInt(idProducto)
+      (prod) => prod.id_producto === parseInt(id_producto)
     );
+
     setProductoSeleccionado(producto);
     setCantidad(1);
   };
@@ -76,48 +86,95 @@ function AgregarProductoVentas() {
     navigate("/ventas");
   };
 
-  const handleGuardar = async () => {
-    if (productosVendidos.length === 0) {
-      setError("Debe agregar un producto");
-      return;
-    }
-
-    try {
-      const respuesta = await fetch(`http://localhost:3000/ventas/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sesion.token}`,
-        },
-        body: JSON.stringify({
-          ventaTotal: ventaTotal,
-          cantidadTotal: cantidad,
-          idFormaPago: formaPagoSeleccionada,
-          productos: productosVendidos,
-        }),
-      });
-
-      if (!respuesta.ok) {
-        const errorData = await respuesta.json();
-        throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
-      }
-
-      navigate("/ventas", { replace: true });
-      console.log(respuesta);
-    } catch (error) {
-      console.error("Error al guardar el producto:", error);
-      setError("No se pudo agregar el producto a la venta.");
-    }
-  };
-
-  const subtotal = productoSeleccionado
-    ? productoSeleccionado.precio_final * cantidad
-    : 0;
-
   const ventaTotal = productosVendidos.reduce(
-    (ac, current) => ac + current.ventaSubTotal,
+    (ac, current) => ac + parseFloat(current.subTotal),
     0
   );
+
+  const handleGuardar = async (
+    idVenta,
+    ventaTotal,
+    cantidadTotal,
+    idFormaPago
+  ) => {
+    try {
+      // Eliminar todos los productos existentes
+      const respuestaDelete = await fetch(
+        `http://localhost:3000/ventas/${idVenta}/ventas_producto`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${sesion.token}`,
+          },
+        }
+      );
+
+      if (!respuestaDelete.ok) {
+        const errorData = await respuestaDelete.json();
+        throw new Error(
+          `Error al eliminar los productos de la venta: ${errorData.error}`
+        );
+      }
+
+      // Guardar productos en la venta
+      for (const producto of productosVendidos) {
+        const { idProducto, cantidad, subTotal } = producto;
+
+        const respuestaProductos = await fetch(
+          `http://localhost:3000/ventas/${idVenta}/ventas_producto`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${sesion.token}`,
+            },
+            body: JSON.stringify({
+              idProducto: idProducto,
+              cantidad: cantidad,
+              ventaSubTotal: subTotal,
+            }),
+          }
+        );
+
+        if (!respuestaProductos.ok) {
+          const errorData = await respuestaProductos.json();
+          throw new Error(
+            `Error al guardar producto en la venta: ${errorData.error}`
+          );
+        }
+      }
+
+      // Actualizar detalles de la venta
+      const respuestaVenta = await fetch(
+        `http://localhost:3000/ventas/${idVenta}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sesion.token}`,
+          },
+          body: JSON.stringify({
+            ventaTotal: ventaTotal,
+            cantidadTotal: cantidadTotal,
+            idFormaPago: venta.idFormaPago,
+          }),
+        }
+      );
+
+      if (!respuestaVenta.ok) {
+        const errorData = await respuestaVenta.json();
+        throw new Error(
+          `Error al actualizar los detalles de la venta: ${errorData.error}`
+        );
+      }
+
+      alert("Venta y productos guardados con éxito.");
+      navigate("/ventas", { replace: true });
+    } catch (error) {
+      console.error("Error al guardar la venta:", error);
+      alert("Ocurrió un error al guardar la venta. Intente nuevamente.");
+    }
+  };
 
   const handleAgregarProducto = () => {
     if (!productoSeleccionado || cantidad <= 0) {
@@ -125,56 +182,65 @@ function AgregarProductoVentas() {
       return;
     }
 
-    if (cantidad > productoSeleccionado.stock_actual) {
+    if (cantidad > productoSeleccionado.stockActual) {
       setError("La cantidad excede el stock disponible.");
       return;
     }
 
-    const estaCargado = productosVendidos.some(
-      (producto) => producto.id_producto === productoSeleccionado.id_producto
+    // Actualizar producto existente o agregar nuevo producto
+    const productoIndex = productosVendidos.findIndex(
+      (producto) => producto.idProducto === productoSeleccionado.id_producto
     );
-    if (estaCargado) {
-      const productosActualizados = productosVendidos.map((producto) => {
-        if (producto.id_producto === productoSeleccionado.id_producto) {
-          return {
-            ...producto,
-            cantidad: cantidad,
-            ventaSubTotal: subtotal,
-          };
-        }
-        return producto;
-      });
+
+    if (productoIndex !== -1) {
+      // Si el producto ya existe, actualiza la cantidad y el subtotal
+      const productosActualizados = [...productosVendidos];
+      productosActualizados[productoIndex] = {
+        ...productosActualizados[productoIndex],
+        cantidad: productosActualizados[productoIndex].cantidad + cantidad,
+        subTotal:
+          parseInt(productosActualizados[productoIndex].subTotal) +
+          parseInt(productoSeleccionado.precio_final) * cantidad,
+      };
       setProductosVendidos(productosActualizados);
     } else {
+      // Si el producto no existe, lo agrega como un nuevo registro
       setProductosVendidos([
         ...productosVendidos,
         {
-          ...productoSeleccionado,
-          ventaSubTotal: subtotal,
+          idProducto: productoSeleccionado.id_producto,
+          nombreProducto: productoSeleccionado.nombre_producto,
+          precioFinal: productoSeleccionado.precio_final,
           cantidad: cantidad,
+          subTotal: parseInt(productoSeleccionado.precio_final) * cantidad,
         },
       ]);
     }
+    // Limpiar selección
+    setProductoSeleccionado(null);
+    setCantidad(1);
+    setError(""); // Limpiar errores
   };
 
-  const handleBorrar = (id_producto) => {
+  console.log(productosVendidos);
+
+  const handleBorrar = (idProducto) => {
     const productosActualizados = productosVendidos.filter(
-      (producto) => producto.id_producto !== id_producto
+      (producto) => producto.idProducto !== idProducto
     );
     setProductosVendidos(productosActualizados);
   };
 
-  console.log(productosVendidos);
   return (
     <div className="pagina-completa">
       <div className="detalle-ventas">
-        <h2>Detalle de Venta #{idVenta}</h2>
+        <h2>Detalle de Venta #{venta.idVenta}</h2>
         <p>
-          <strong>Total de Venta:</strong> ${ventaTotal}
+          <strong>Total de Venta:</strong> ${parseInt(ventaTotal)}
         </p>
         <p>
           <strong>Fecha:</strong>{" "}
-          {new Date().toLocaleDateString("es-ES", {
+          {new Date(venta.fecha).toLocaleDateString("es-ES", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
@@ -182,17 +248,7 @@ function AgregarProductoVentas() {
         </p>
         <div>
           <strong>Forma de Pago:</strong>
-          <select
-            value={formaPagoSeleccionada}
-            onChange={(e) => setFormaPagoSeleccionada(e.target.value)}
-          >
-            <option value="">Seleccione una Opción</option>
-            {formasPago.map((forma) => (
-              <option key={forma.id_forma_pago} value={forma.id_forma_pago}>
-                {forma.descripcion}
-              </option>
-            ))}
-          </select>
+          {venta.formaPago}
         </div>
         <p>
           <strong>Cantidad Total:</strong> {productosVendidos.length}
@@ -214,16 +270,16 @@ function AgregarProductoVentas() {
                 <td>
                   <button
                     className="btn-eliminar"
-                    onClick={() => handleBorrar(producto.id_producto)}
+                    onClick={() => handleBorrar(producto.idProducto)}
                   >
                     🗑️
                   </button>
                 </td>
-                <td>{producto.id_producto}</td>
-                <td>{producto.nombre_producto}</td>
-                <td>${producto.precio_final}</td>
+                <td>{producto.idProducto}</td>
+                <td>{producto.nombreProducto}</td>
+                <td>${producto.precioFinal}</td>
                 <td>{producto.cantidad}</td>
-                <td>${producto.ventaSubTotal}</td>
+                <td>${producto.subTotal}</td>
               </tr>
             ))}
             {productosVendidos.length === 0 && (
@@ -301,7 +357,14 @@ function AgregarProductoVentas() {
         <button
           className="btn-guardar"
           disabled={productosVendidos.length === 0}
-          onClick={handleGuardar}
+          onClick={() =>
+            handleGuardar(
+              venta.idVenta,
+              ventaTotal,
+              productosVendidos.length,
+              formaPagoSeleccionada
+            )
+          }
         >
           Guardar
         </button>
@@ -310,4 +373,4 @@ function AgregarProductoVentas() {
   );
 }
 
-export default AgregarProductoVentas;
+export default EditarProductoVentas;
