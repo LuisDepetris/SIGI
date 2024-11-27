@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Formulario from "../components/Formulario";
-import styles from "../styles/DetalleProducto.module.css";
+import "../styles/DetalleProducto.css";
 import { useNavigate, useParams } from "react-router-dom";
 
 const EditarProducto = () => {
@@ -40,8 +40,8 @@ const EditarProducto = () => {
   };
 
   return (
-    <div className={styles.pageContainer}>
-      <h2 className={styles.pageTitle}>Editar Producto</h2>
+    <div className='pageContainer'>
+      <h2 className='pageTitle'>Editar Producto</h2>
       {producto && (
         <Formulario
           producto={producto}

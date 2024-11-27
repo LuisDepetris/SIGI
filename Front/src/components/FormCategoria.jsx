@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styles from '../styles/Formulario.module.css';
+import '../styles/Formulario.css';
 import { useNavigate } from 'react-router-dom';
 
 const FormCategoria = ({ onGuardar, categoria, errores, tipoEntidad, pagos }) => {
@@ -30,8 +30,8 @@ const FormCategoria = ({ onGuardar, categoria, errores, tipoEntidad, pagos }) =>
     : (pagos ? 'Guardar Cambios' : 'Agregar Forma de Pago');
 
   return (
-    <form onSubmit={handleSubmit} className={styles.formContainer}>
-      <div className={styles.formGroup}>
+    <form onSubmit={handleSubmit} className='formContainer'>
+      <div className='formGroup'>
       <label>{labelTitulo}</label>
         <input
           type="text"
@@ -40,9 +40,9 @@ const FormCategoria = ({ onGuardar, categoria, errores, tipoEntidad, pagos }) =>
         />
         {errores.descripcion && <div style={{color: "red"}}>{errores.descripcion.msg}</div>}
       </div>
-      <div className={styles.buttonGroup}>
-        <button type="button" onClick={() => navigate(-1)} className={styles.cancelButton}>Salir</button>
-        <button type="submit" className={styles.saveButton}>
+      <div className='buttonGroup'>
+        <button type="button" onClick={() => navigate(-1)} className='cancelButton'>Salir</button>
+        <button type="submit" className='saveButton'>
           {botonTexto}
         </button>
       </div>
