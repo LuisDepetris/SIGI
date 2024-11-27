@@ -38,165 +38,166 @@ function DetalleVentas() {
     obtenerDetalleVenta();
   }, [editando]);
 
-  useEffect(() => {
-    const obetenerFormasPago = async () => {
-      try {
-        const respuesta = await fetch(`http://localhost:3000/pagos`);
+  // useEffect(() => {
+  //   const obetenerFormasPago = async () => {
+  //     try {
+  //       const respuesta = await fetch(`http://localhost:3000/pagos`);
 
-        if (!respuesta.ok) {
-          const errorData = await respuesta.json();
-          throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
-        }
+  //       if (!respuesta.ok) {
+  //         const errorData = await respuesta.json();
+  //         throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
+  //       }
 
-        const data = await respuesta.json();
-        const formasFiltradas = data.formasPago.filter(
-          (pago) => pago.inhabilitado == 0
-        );
-        setFormasPago(formasFiltradas);
-      } catch (error) {
-        console.error("Error al obtener las forams de pago:", error);
-        setError("No se pudo cargar la información de las formas de pago.");
-      }
-    };
+  //       const data = await respuesta.json();
+  //       const formasFiltradas = data.formasPago.filter(
+  //         (pago) => pago.inhabilitado == 0
+  //       );
+  //       setFormasPago(formasFiltradas);
+  //     } catch (error) {
+  //       console.error("Error al obtener las forams de pago:", error);
+  //       setError("No se pudo cargar la información de las formas de pago.");
+  //     }
+  //   };
 
-    obetenerFormasPago();
-  }, []);
+  //   obetenerFormasPago();
+  // }, []);
 
-  const handleBorrar = async (
-    idVentaProducto,
-    idProducto,
-    cantidad,
-    ventaSubTotal
-  ) => {
-    if (productos.length === 1) {
-      alert("No puedes eliminar el único producto de la venta.");
-      return;
-    }
+  // const handleBorrar = async (
+  //   idVentaProducto,
+  //   idProducto,
+  //   cantidad,
+  //   ventaSubTotal
+  // ) => {
+  //   if (productos.length === 1) {
+  //     alert("No puedes eliminar el único producto de la venta.");
+  //     return;
+  //   }
 
-    const confirmacion = window.confirm(
-      `¿Estás seguro de eliminar el producto?`
-    );
-    if (!confirmacion) return;
+  //   const confirmacion = window.confirm(
+  //     `¿Estás seguro de eliminar el producto?`
+  //   );
+  //   if (!confirmacion) return;
 
-    try {
-      const respuesta = await fetch(
-        `http://localhost:3000/ventas/${id}/ventas_producto/`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${sesion.token}`,
-          },
-          body: JSON.stringify({
-            idVentaProducto: idVentaProducto,
-            idProducto: idProducto,
-            cantidad: cantidad,
-            ventaSubTotal: ventaSubTotal,
-          }),
-        }
-      );
+  //   try {
+  //     const respuesta = await fetch(
+  //       `http://localhost:3000/ventas/${id}/ventas_producto/`,
+  //       {
+  //         method: "DELETE",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${sesion.token}`,
+  //         },
+  //         body: JSON.stringify({
+  //           idVentaProducto: idVentaProducto,
+  //           idProducto: idProducto,
+  //           cantidad: cantidad,
+  //           ventaSubTotal: ventaSubTotal,
+  //         }),
+  //       }
+  //     );
 
-      if (!respuesta.ok) {
-        const errorData = await respuesta.json();
-        throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
-      }
+  //     if (!respuesta.ok) {
+  //       const errorData = await respuesta.json();
+  //       throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
+  //     }
 
-      const productosActualizados = productos.filter(
-        (producto) => producto.idProducto !== idProducto
-      );
+  //     const productosActualizados = productos.filter(
+  //       (producto) => producto.idProducto !== idProducto
+  //     );
 
-      const nuevoTotal = productosActualizados.reduce(
-        (ac, current) => ac + parseInt(current.subTotal),
-        0
-      );
+  //     const nuevoTotal = productosActualizados.reduce(
+  //       (ac, current) => ac + parseInt(current.subTotal),
+  //       0
+  //     );
 
-      const nuevaCantidadTotal = productosActualizados.reduce(
-        (ac, current) => ac + current.cantidad,
-        0
-      );
+  //     const nuevaCantidadTotal = productosActualizados.reduce(
+  //       (ac, current) => ac + current.cantidad,
+  //       0
+  //     );
 
-      setProductos(productosActualizados);
+  //     setProductos(productosActualizados);
 
-      setVenta({
-        ...venta,
-        ventaTotal: parseFloat(nuevoTotal),
-        cantidadTotal: nuevaCantidadTotal,
-      });
+  //     setVenta({
+  //       ...venta,
+  //       ventaTotal: parseFloat(nuevoTotal),
+  //       cantidadTotal: nuevaCantidadTotal,
+  //     });
 
-      handleGuardar(
-        id,
-        parseFloat(nuevoTotal),
-        nuevaCantidadTotal,
-        venta.idFormaPago
-      );
+  //     handleGuardar(
+  //       id,
+  //       parseFloat(nuevoTotal),
+  //       nuevaCantidadTotal,
+  //       venta.idFormaPago
+  //     );
 
-      setEliminando(true);
-      alert("Producto eliminado correctamente.");
-    } catch (error) {
-      console.error("Error al eliminar la venta:", error);
-      alert("No se pudo eliminar la venta.");
-    }
-  };
+  //     setEliminando(true);
+  //     alert("Producto eliminado correctamente.");
+  //   } catch (error) {
+  //     console.error("Error al eliminar la venta:", error);
+  //     alert("No se pudo eliminar la venta.");
+  //   }
+  // };
 
   const handleVolver = () => {
     navigate("/ventas");
   };
 
-  const handleEditar = () => {
-    if (sesion.rol === "Lector") {
-      alert("No tienes permisos para editar");
-      return;
-    } else {
-      alert("Usted esta habilitado para editar los registros");
-      setEditando(true);
-    }
-  };
+  // const handleEditar = () => {
+  //   if (sesion.rol === "Lector") {
+  //     alert("No tienes permisos para editar");
+  //     return;
+  //   } else {
+  //     alert("Usted esta habilitado para editar los registros");
+  //     setEditando(true);
+  //   }
+  // };
 
-  const handleGuardar = async (id, ventaTotal, cantidadTotal, idFormaPago) => {
-    try {
-      const respuesta = await fetch(`http://localhost:3000/ventas/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sesion.token}`,
-        },
-        body: JSON.stringify({
-          ventaTotal: ventaTotal,
-          cantidadTotal: cantidadTotal,
-          idFormaPago: idFormaPago,
-        }),
-      });
-      console.log(`${idFormaPago}`);
-      if (!respuesta.ok) {
-        const errorData = await respuesta.json();
-        throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
-      }
+  // const handleGuardar = async (id, ventaTotal, cantidadTotal, idFormaPago) => {
+  //   try {
+  //     const respuesta = await fetch(`http://localhost:3000/ventas/${id}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${sesion.token}`,
+  //       },
+  //       body: JSON.stringify({
+  //         ventaTotal: ventaTotal,
+  //         cantidadTotal: cantidadTotal,
+  //         idFormaPago: idFormaPago,
+  //       }),
+  //     });
 
-      alert("Venta modificada con éxito");
-      setEditando(false);
+  //     if (!respuesta.ok) {
+  //       const errorData = await respuesta.json();
+  //       throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
+  //     }
 
-      if (!editando) {
-        alert("Venta modificada con éxito");
-        navigate("/ventas", { replace: true });
-      }
-    } catch (error) {
-      console.error("Error al modificar la venta:", error);
-      alert("No se pudo modificar la venta.");
-    }
-  };
+  //     alert("Venta modificada con éxito");
+  //     setEditando(false);
+
+  //     if (!editando) {
+  //       alert("Venta modificada con éxito");
+  //       navigate("/ventas", { replace: true });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error al modificar la venta:", error);
+  //     alert("No se pudo modificar la venta.");
+  //   }
+  // };
 
   const handleAgregar = () => {
     navigate("/EditarProductoVentas", { state: { venta } });
   };
 
-  const elegirMedioPago = (e) => {
-    const idActual = parseInt(e.target.value);
-    if (idActual === -1) {
-      navigate("formas_de_pago");
-    } else {
-      setFormaPagoSeleccionada(idActual);
-    }
-  };
+  // const elegirMedioPago = (e) => {
+  //   const idActual = parseInt(e.target.value);
+  //   if (idActual === -1) {
+  //     navigate("formas_de_pago");
+  //   } else {
+  //     setFormaPagoSeleccionada(idActual);
+  //   }
+  // };
+
   return (
     <div className="detalle-ventas">
       {error && <p className="error">{error}</p>}
@@ -234,7 +235,7 @@ function DetalleVentas() {
           <table className="productos-tabla">
             <thead>
               <tr>
-                <th></th>
+                {/* <th></th> */}
                 <th>ID Producto</th>
                 <th>Nombre</th>
                 <th>Precio</th>
@@ -245,7 +246,7 @@ function DetalleVentas() {
             <tbody>
               {productos.map((producto) => (
                 <tr key={producto.idProducto}>
-                  <td>
+                  {/* <td>
                     <button
                       className="btn-eliminar"
                       disabled={!editando}
@@ -260,7 +261,7 @@ function DetalleVentas() {
                     >
                       🗑️
                     </button>
-                  </td>
+                  </td> */}
                   <td>{producto.idProducto}</td>
                   <td>{producto.nombreProducto}</td>
                   <td>${producto.precioFinal}</td>
@@ -274,14 +275,14 @@ function DetalleVentas() {
           <button className="botones-edicion" onClick={handleVolver}>
             Volver a Ventas
           </button>
-          <button
+          {/* <button
             className="botones-edicion"
             onClick={handleEditar}
             disabled={sesion.rol === "Lector"}
           >
             Editar
-          </button>
-          <button
+          </button> */}
+          {/* <button
             className="botones-edicion"
             disabled={!editando || !formaPagoSeleccionada}
             onClick={() =>
@@ -294,13 +295,9 @@ function DetalleVentas() {
             }
           >
             Guardar
-          </button>
-          <button
-            className="botones-edicion"
-            disabled={!editando}
-            onClick={handleAgregar}
-          >
-            + Productos
+          </button> */}
+          <button className="botones-edicion" onClick={handleAgregar}>
+            Editar Venta
           </button>
         </>
       ) : (

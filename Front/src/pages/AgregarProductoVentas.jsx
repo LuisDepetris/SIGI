@@ -103,7 +103,6 @@ function AgregarProductoVentas() {
       }
 
       navigate("/ventas", { replace: true });
-      console.log(respuesta);
     } catch (error) {
       console.error("Error al guardar el producto:", error);
       setError("No se pudo agregar el producto a la venta.");
@@ -164,7 +163,6 @@ function AgregarProductoVentas() {
     setProductosVendidos(productosActualizados);
   };
 
-  console.log(productosVendidos);
   return (
     <div className="pagina-completa">
       <div className="detalle-ventas">
