@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "../styles/DetalleVentas.css";
 import { useAuth } from "../auth/authContext";
 
@@ -85,6 +85,7 @@ function DetalleVentas() {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${sesion.token}`,
           },
           body: JSON.stringify({
             idVentaProducto: idVentaProducto,
@@ -157,6 +158,7 @@ function DetalleVentas() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${sesion.token}`,
         },
         body: JSON.stringify({
           ventaTotal: ventaTotal,
@@ -184,17 +186,17 @@ function DetalleVentas() {
   };
 
   const handleAgregar = () => {
-    navigate("/agregarProductoVentas");
+    navigate("/EditarProductoVentas", { state: { venta } });
   };
 
-  const elegirMedioPago = (e)=>{
+  const elegirMedioPago = (e) => {
     const idActual = parseInt(e.target.value);
     if (idActual === -1) {
       navigate("formas_de_pago");
     } else {
       setFormaPagoSeleccionada(idActual);
     }
-  }
+  };
   return (
     <div className="detalle-ventas">
       {error && <p className="error">{error}</p>}
@@ -211,10 +213,7 @@ function DetalleVentas() {
           <div>
             <strong>Forma de Pago:</strong>
             {editando ? (
-              <select
-                value={formaPagoSeleccionada}
-                onChange={elegirMedioPago}
-              >
+              <select value={formaPagoSeleccionada} onChange={elegirMedioPago}>
                 <option value="">Seleccione una Opción</option>
                 {formasPago.map((forma) => (
                   <option key={forma.id_forma_pago} value={forma.id_forma_pago}>
