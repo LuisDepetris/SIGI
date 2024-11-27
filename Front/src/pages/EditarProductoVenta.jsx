@@ -9,7 +9,6 @@ function EditarProductoVentas() {
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [cantidad, setCantidad] = useState(1);
   const [error, setError] = useState("");
-  const [detalleVenta, setDetalleVenta] = useState([]);
   const [productosVendidos, setProductosVendidos] = useState([]);
   const { sesion } = useAuth();
   const [productosActualizados, setProductosActualizados] = useState([]);
@@ -97,6 +96,10 @@ function EditarProductoVentas() {
     cantidadTotal,
     idFormaPago
   ) => {
+    if (idFormaPago === "") {
+      idFormaPago = venta.idFormaPago;
+    }
+
     try {
       // Eliminar todos los productos existentes
       const respuestaDelete = await fetch(
@@ -156,7 +159,7 @@ function EditarProductoVentas() {
           body: JSON.stringify({
             ventaTotal: ventaTotal,
             cantidadTotal: cantidadTotal,
-            idFormaPago: venta.idFormaPago,
+            idFormaPago: idFormaPago,
           }),
         }
       );
@@ -222,13 +225,20 @@ function EditarProductoVentas() {
     setError(""); // Limpiar errores
   };
 
-  console.log(productosVendidos);
-
   const handleBorrar = (idProducto) => {
     const productosActualizados = productosVendidos.filter(
       (producto) => producto.idProducto !== idProducto
     );
     setProductosVendidos(productosActualizados);
+  };
+
+  const elegirMedioPago = (e) => {
+    const idActual = parseInt(e.target.value);
+    if (idActual === -1) {
+      navigate("formas_de_pago");
+    } else {
+      setFormaPagoSeleccionada(idActual);
+    }
   };
 
   return (
@@ -248,7 +258,15 @@ function EditarProductoVentas() {
         </p>
         <div>
           <strong>Forma de Pago:</strong>
-          {venta.formaPago}
+          <select value={formaPagoSeleccionada} onChange={elegirMedioPago}>
+            <option value="">Seleccione una Opción</option>
+            {formasPago.map((forma) => (
+              <option key={forma.id_forma_pago} value={forma.id_forma_pago}>
+                {forma.descripcion}
+              </option>
+            ))}
+            <option value={-1}>Agregar nueva Forma de Pago</option>
+          </select>
         </div>
         <p>
           <strong>Cantidad Total:</strong> {productosVendidos.length}
@@ -266,7 +284,7 @@ function EditarProductoVentas() {
           </thead>
           <tbody>
             {productosVendidos.map((producto, index) => (
-              <tr key={producto.id_producto}>
+              <tr key={producto.idProducto}>
                 <td>
                   <button
                     className="btn-eliminar"
