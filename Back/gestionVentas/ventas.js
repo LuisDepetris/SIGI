@@ -232,40 +232,64 @@ router.post(
   }
 );
 
+// router.delete(
+//   "/:id/ventas_producto/",
+//   passport.authenticate("jwt", { session: false }),
+//   validarPermisosUsuario(["Administrador", "Editor"]),
+//   validarAtributosVentaProducto(),
+//   async (req, res) => {
+//     const validacion = validationResult(req);
+//     if (!validacion.isEmpty()) {
+//       res.status(400).send({ errores: validacion.array() });
+//       return;
+//     }
+
+//     const idVentaProducto = req.body.idVentaProducto;
+//     const idProducto = req.body.idProducto;
+//     const cantidad = req.body.cantidad;
+
+//     try {
+//       const sqlEliminarProductoDeUnaVenta =
+//         "CALL spEliminarProductoDeUnaVenta(?, ?, ?)";
+//       await db.execute(sqlEliminarProductoDeUnaVenta, [
+//         idVentaProducto,
+//         idProducto,
+//         cantidad,
+//       ]);
+
+//       return res.status(201).send({ id: { idVentaProducto } });
+//     } catch (error) {
+//       console.error(
+//         "Error al eliminar el producto de la venta:",
+//         error.message
+//       );
+//       return res
+//         .status(500)
+//         .send({ error: "Error al eliminar el producto de la venta." });
+//     }
+//   }
+// );
+
 router.delete(
-  "/:id/ventas_producto/",
+  "/:id/ventas_producto",
   passport.authenticate("jwt", { session: false }),
   validarPermisosUsuario(["Administrador", "Editor"]),
-  validarAtributosVentaProducto(),
   async (req, res) => {
-    const validacion = validationResult(req);
-    if (!validacion.isEmpty()) {
-      res.status(400).send({ errores: validacion.array() });
-      return;
-    }
-
-    const idVentaProducto = req.body.idVentaProducto;
-    const idProducto = req.body.idProducto;
-    const cantidad = req.body.cantidad;
+    const idVenta = req.params.id;
 
     try {
-      const sqlEliminarProductoDeUnaVenta =
-        "CALL spEliminarProductoDeUnaVenta(?, ?, ?)";
-      await db.execute(sqlEliminarProductoDeUnaVenta, [
-        idVentaProducto,
-        idProducto,
-        cantidad,
-      ]);
+      const sqlEliminarProductosDeVenta =
+        "DELETE FROM ventas_producto WHERE id_venta = ?";
+      await db.execute(sqlEliminarProductosDeVenta, [idVenta]);
 
-      return res.status(201).send({ id: { idVentaProducto } });
+      return res
+        .status(200)
+        .send({ mensaje: "Productos eliminados correctamente." });
     } catch (error) {
-      console.error(
-        "Error al eliminar el producto de la venta:",
-        error.message
-      );
+      console.error("Error al eliminar productos de la venta:", error.message);
       return res
         .status(500)
-        .send({ error: "Error al eliminar el producto de la venta." });
+        .send({ error: "Error al eliminar productos de la venta." });
     }
   }
 );
