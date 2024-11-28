@@ -234,8 +234,17 @@ function AgregarProductoVentas() {
         <div className="form-group">
           <label htmlFor="select-producto">Producto:</label>
           <SelectorProductos
-            value={productoSeleccionado?.id_producto || ""}
-            onChange={(e) => handleSeleccionarProducto(e.target.value)}
+            value={productoSeleccionado?.id_producto || null}
+            productos={productos.map((p) => ({
+              value: p.id_producto,
+              label: p.nombre_producto,
+            }))}
+            onChange={(idProducto) => {
+              const producto = productos.find(
+                (p) => p.id_producto === idProducto
+              );
+              setProductoSeleccionado(producto || null);
+            }}
           />
         </div>
 

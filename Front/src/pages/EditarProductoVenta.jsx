@@ -26,6 +26,27 @@ function EditarProductoVentas() {
     }
   }, [venta]);
 
+  useEffect(() => {
+    const obtenerProductos = async () => {
+      try {
+        const respuesta = await fetch("http://localhost:3000/productos");
+
+        if (!respuesta.ok) {
+          const errorData = await respuesta.json();
+          throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
+        }
+
+        const data = await respuesta.json();
+        setProductos(data.productos); // Guarda los productos en el estado
+      } catch (error) {
+        console.error("Error al obtener los productos:", error);
+        setError("No se pudieron cargar los productos.");
+      }
+    };
+
+    obtenerProductos();
+  }, []);
+
   const handleSeleccionarProducto = (id_producto) => {
     const producto = productos.find(
       (prod) => prod.id_producto === parseInt(id_producto)
@@ -280,8 +301,17 @@ function EditarProductoVentas() {
         <div className="form-group">
           <label htmlFor="select-producto">Producto:</label>
           <SelectorProductos
-            value={productoSeleccionado?.id_producto || ""}
-            onChange={(e) => handleSeleccionarProducto(e.target.value)}
+            value={productoSeleccionado?.id_producto || null}
+            productos={productos.map((p) => ({
+              value: p.id_producto,
+              label: p.nombre_producto,
+            }))}
+            onChange={(idProducto) => {
+              const producto = productos.find(
+                (p) => p.id_producto === idProducto
+              );
+              setProductoSeleccionado(producto || null);
+            }}
           />
         </div>
 
