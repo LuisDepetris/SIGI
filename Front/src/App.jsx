@@ -7,7 +7,6 @@ import DetalleProducto from "./pages/DetalleProducto";
 import EditarProducto from "./pages/EditarProducto";
 import GestionCategorias from "./pages/GestionCategoria";
 import Layout from "./components/Layout";
-import VentanaPrincipal from "./pages/VentanaPrincipal";
 import DetalleVentas from "./pages/DetalleVentas";
 import AgregarProductoVentas from "./pages/AgregarProductoVentas";
 import GestionFormPagos from "./pages/GestionFormPagos";
@@ -16,12 +15,12 @@ import GestionUsuarios from "./pages/GestionUsuarios";
 import Login from "./pages/Login";
 import EditarProductoVentas from "./pages/EditarProductoVenta";
 import PaginaError from "./pages/PaginaError";
+import "./styles/App.css";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        {/* <Route index element={<VentanaPrincipal />} /> */}
         <Route index element={<Login />} />
         <Route
           path="ventas"
@@ -135,8 +134,8 @@ function App() {
               <AuthRol roles={["Administrador", "Editor", "Lector"]}>
                 <GestionFormPagos />
               </AuthRol>
-          </AuthPage>      
-        }
+            </AuthPage>
+          }
         />
         <Route
           path="AgregarProductoVentas/GestionFormPagos"
@@ -145,8 +144,8 @@ function App() {
               <AuthRol roles={["Administrador", "Editor", "Lector"]}>
                 <GestionFormPagos />
               </AuthRol>
-          </AuthPage>      
-        }
+            </AuthPage>
+          }
         />
         <Route
           path="usuarios"
@@ -162,11 +161,13 @@ function App() {
         <Route
           path="/prohibido"
           element={
-            <AuthRol roles={["Administrador", "Editor", "Lector"]}>
-              <PaginaError
-                mensaje={"No tienes permisos para acceder a esta ruta"}
-              />
-            </AuthRol>
+            <AuthPage>
+              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
+                <PaginaError
+                  mensaje={"No tienes permisos para acceder a esta ruta"}
+                />
+              </AuthRol>
+            </AuthPage>
           }
         />
         <Route

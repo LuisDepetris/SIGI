@@ -22,6 +22,11 @@
   margin-right: 10px;
 }
 
+.title {
+  flex: 1;
+  letter-spacing: 1px;
+}
+
 .menu-desplegable {
   position: absolute;
   top: 50px; /* Justo debajo del header */
@@ -46,4 +51,12 @@
 
 .menu-desplegable li:hover {
   background-color: #51e5ff;
+}
+
+.link {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  letter-spacing: 2px;
 }

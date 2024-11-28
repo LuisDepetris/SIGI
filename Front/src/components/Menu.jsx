@@ -15,29 +15,36 @@ function Menu() {
       <button onClick={toggleMenu} className="menu-icon">
         &#9776;
       </button>
-      <h1 style={{ flex: 1 }}>
+      <h1 className="title">
         Sistema de Gestión de Inventario - Connor Pet Shop
       </h1>
       {menuAbierto && (
         <div className="menu-desplegable">
           <ul>
             <li>
-              <Link to="/" onClick={() => setMenuAbierto(false)}>
-                Inicio
-              </Link>
-            </li>
-            <li>
-              <Link to="/ventas" onClick={() => setMenuAbierto(false)}>
+              <Link
+                to="/ventas"
+                className="link"
+                onClick={() => setMenuAbierto(false)}
+              >
                 Ventas
               </Link>
             </li>
             <li>
-              <Link to="/productos" onClick={() => setMenuAbierto(false)}>
+              <Link
+                to="/productos"
+                className="link"
+                onClick={() => setMenuAbierto(false)}
+              >
                 Productos
               </Link>
             </li>
             <li>
-              <Link to="/usuarios" onClick={() => setMenuAbierto(false)}>
+              <Link
+                to="/usuarios"
+                className="link"
+                onClick={() => setMenuAbierto(false)}
+              >
                 Gestión de Usuarios
               </Link>
             </li>
