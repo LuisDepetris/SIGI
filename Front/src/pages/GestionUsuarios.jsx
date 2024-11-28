@@ -24,7 +24,7 @@ const GestionUsuarios = () => {
     if (response.ok) {
       const { usuarios } = await response.json();
       const usuariosFiltrados = usuarios.filter(
-        (usuario) => usuario.inhabilitado == 0
+        (usuario) => usuario.inhabilitado == 0 && usuario.id_usuario != sesion.idUsuario
       );
       setUsuarios(usuariosFiltrados);
     }
