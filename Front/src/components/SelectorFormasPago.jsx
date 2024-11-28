@@ -28,7 +28,10 @@ function SelectorFormasPago({ value, onChange, agregarNuevaFormaPago }) {
   return (
     <div>
       {error && <p className="error">{error}</p>}
-      <select value={value} onChange={onChange}>
+      <select
+        value={value || ""} // Si value es null o undefined, usa ""
+        onChange={onChange}
+      >
         <option value="">Seleccione una Opción</option>
         {formasPago.map((forma) => (
           <option key={forma.id_forma_pago} value={forma.id_forma_pago}>

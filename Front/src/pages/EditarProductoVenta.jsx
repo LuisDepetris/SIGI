@@ -74,6 +74,11 @@ function EditarProductoVentas() {
     setCantidad(nuevaCantidad > 0 ? nuevaCantidad : 1);
   };
 
+  const cantidadTotal = productosVendidos.reduce(
+    (acumulador, producto) => acumulador + producto.cantidad,
+    0
+  );
+
   const handleVolver = () => {
     navigate("/ventas");
   };
@@ -226,18 +231,14 @@ function EditarProductoVentas() {
   };
 
   const elegirMedioPago = (e) => {
-    const idActual = parseInt(e.target.value);
-    if (idActual === -1) {
-      navigate("GestionFormPagos");
+    const idActual = parseInt(e.target.value, 10);
+    if (isNaN(idActual)) {
+      // Si el valor no es un número válido, restablece el estado
+      setFormaPagoSeleccionada("");
     } else {
       setFormaPagoSeleccionada(idActual);
     }
   };
-
-  const cantidadTotal = productosVendidos.reduce(
-    (acumulador, producto) => acumulador + producto.cantidad,
-    0
-  );
 
   return (
     <div className="pagina-completa">
@@ -257,15 +258,8 @@ function EditarProductoVentas() {
         <div>
           <strong>Forma de Pago:</strong>
           <SelectorFormasPago
-            value={formaPagoSeleccionada}
-            onChange={(e) => {
-              const idActual = parseInt(e.target.value);
-              if (idActual === -1) {
-                navigate("GestionFormPagos");
-              } else {
-                setFormaPagoSeleccionada(idActual);
-              }
-            }}
+            value={formaPagoSeleccionada || ""}
+            onChange={elegirMedioPago}
             agregarNuevaFormaPago={true}
           />
         </div>
@@ -373,7 +367,7 @@ function EditarProductoVentas() {
             handleGuardar(
               venta.idVenta,
               ventaTotal,
-              productosVendidos.length,
+              cantidadTotal,
               formaPagoSeleccionada
             )
           }
