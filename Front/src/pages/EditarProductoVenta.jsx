@@ -232,6 +232,9 @@ function EditarProductoVentas() {
 
   const elegirMedioPago = (e) => {
     const idActual = parseInt(e.target.value, 10);
+    if (idActual === -1) {
+      navigate("/GestionFormPagos");
+    }
     if (isNaN(idActual)) {
       // Si el valor no es un número válido, restablece el estado
       setFormaPagoSeleccionada("");
