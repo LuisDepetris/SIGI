@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "../styles/AgregarProductoVentas.css";
 import { useAuth } from "../auth/authContext";
 import SelectorFormasPago from "../components/SelectorFormasPago";
+import SelectorProductos from "../components/SelectorProductos";
 
 function AgregarProductoVentas() {
   const [productos, setProductos] = useState([]);
@@ -232,17 +233,10 @@ function AgregarProductoVentas() {
 
         <div className="form-group">
           <label htmlFor="select-producto">Producto:</label>
-          <select
-            id="select-producto"
+          <SelectorProductos
+            value={productoSeleccionado?.id_producto || ""}
             onChange={(e) => handleSeleccionarProducto(e.target.value)}
-          >
-            <option value="">Seleccione un producto</option>
-            {productos.map((producto) => (
-              <option key={producto.id_producto} value={producto.id_producto}>
-                {producto.nombre_producto}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         {productoSeleccionado && (

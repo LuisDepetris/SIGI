@@ -4,6 +4,7 @@ import "../styles/AgregarProductoVentas.css";
 import { useAuth } from "../auth/authContext";
 import Ventas from "./Ventas";
 import SelectorFormasPago from "../components/SelectorFormasPago";
+import SelectorProductos from "../components/SelectorProductos";
 
 function EditarProductoVentas() {
   const [productos, setProductos] = useState([]);
@@ -17,29 +18,7 @@ function EditarProductoVentas() {
   const [formasPago, setFormasPago] = useState([]);
   const [formaPagoSeleccionada, setFormaPagoSeleccionada] = useState("");
   const location = useLocation();
-
   const { venta } = location.state || {};
-
-  useEffect(() => {
-    const obtenerProductos = async () => {
-      try {
-        const respuesta = await fetch("http://localhost:3000/productos");
-
-        if (!respuesta.ok) {
-          const errorData = await respuesta.json();
-          throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
-        }
-
-        const data = await respuesta.json();
-        setProductos(data.productos);
-      } catch (error) {
-        console.error("Error al obtener los productos:", error);
-        setError("No se pudieron cargar los productos.");
-      }
-    };
-
-    obtenerProductos();
-  }, []);
 
   useEffect(() => {
     if (venta && venta.productos) {
@@ -300,17 +279,10 @@ function EditarProductoVentas() {
 
         <div className="form-group">
           <label htmlFor="select-producto">Producto:</label>
-          <select
-            id="select-producto"
+          <SelectorProductos
+            value={productoSeleccionado?.id_producto || ""}
             onChange={(e) => handleSeleccionarProducto(e.target.value)}
-          >
-            <option value="">Seleccione un producto</option>
-            {productos.map((producto) => (
-              <option key={producto.id_producto} value={producto.id_producto}>
-                {producto.nombre_producto}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         {productoSeleccionado && (
