@@ -3,6 +3,8 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "../styles/AgregarProductoVentas.css";
 import { useAuth } from "../auth/authContext";
 import Ventas from "./Ventas";
+import SelectorFormasPago from "../components/SelectorFormasPago";
+import SelectorProductos from "../components/SelectorProductos";
 
 function EditarProductoVentas() {
   const [productos, setProductos] = useState([]);
@@ -16,8 +18,13 @@ function EditarProductoVentas() {
   const [formasPago, setFormasPago] = useState([]);
   const [formaPagoSeleccionada, setFormaPagoSeleccionada] = useState("");
   const location = useLocation();
-
   const { venta } = location.state || {};
+
+  useEffect(() => {
+    if (venta && venta.productos) {
+      setProductosVendidos(venta.productos);
+    }
+  }, [venta]);
 
   useEffect(() => {
     const obtenerProductos = async () => {
@@ -30,7 +37,7 @@ function EditarProductoVentas() {
         }
 
         const data = await respuesta.json();
-        setProductos(data.productos);
+        setProductos(data.productos); // Guarda los productos en el estado
       } catch (error) {
         console.error("Error al obtener los productos:", error);
         setError("No se pudieron cargar los productos.");
@@ -40,47 +47,37 @@ function EditarProductoVentas() {
     obtenerProductos();
   }, []);
 
-  useEffect(() => {
-    const obetenerFormasPago = async () => {
-      try {
-        const respuesta = await fetch(`http://localhost:3000/pagos`);
-
-        if (!respuesta.ok) {
-          const errorData = await respuesta.json();
-          throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
-        }
-
-        const data = await respuesta.json();
-        setFormasPago(data.formasPago);
-      } catch (error) {
-        console.error("Error al obtener las forams de pago:", error);
-        setError("No se pudo cargar la información de las formas de pago.");
+  const handleSeleccionarProducto = async (id_producto) => {
+    try {
+      // Obtener detalles del producto desde el backend
+      const respuesta = await fetch(
+        `http://localhost:3000/productos/${id_producto}`
+      );
+      if (!respuesta.ok) {
+        throw new Error("Error al obtener los detalles del producto");
       }
-    };
 
-    obetenerFormasPago();
-  }, []);
+      const { producto } = await respuesta.json();
 
-  useEffect(() => {
-    if (venta && venta.productos) {
-      setProductosVendidos(venta.productos);
+      // Actualizar el estado con los detalles del producto
+      setProductoSeleccionado(producto);
+      setCantidad(1);
+      setError("");
+    } catch (error) {
+      console.error("Error al obtener detalles del producto:", error);
+      setError("No se pudieron obtener los detalles del producto.");
     }
-  }, [venta]);
-
-  const handleSeleccionarProducto = (id_producto) => {
-    const producto = productos.find(
-      (prod) => prod.id_producto === parseInt(id_producto)
-    );
-
-    setProductoSeleccionado(producto);
-    setCantidad(1);
-    setError('');
   };
 
   const handleCantidadChange = (e) => {
     const nuevaCantidad = parseInt(e.target.value, 10);
     setCantidad(nuevaCantidad > 0 ? nuevaCantidad : 1);
   };
+
+  const cantidadTotal = productosVendidos.reduce(
+    (acumulador, producto) => acumulador + producto.cantidad,
+    0
+  );
 
   const handleVolver = () => {
     navigate("/ventas");
@@ -234,9 +231,10 @@ function EditarProductoVentas() {
   };
 
   const elegirMedioPago = (e) => {
-    const idActual = parseInt(e.target.value);
-    if (idActual === -1) {
-      navigate("GestionFormPagos");
+    const idActual = parseInt(e.target.value, 10);
+    if (isNaN(idActual)) {
+      // Si el valor no es un número válido, restablece el estado
+      setFormaPagoSeleccionada("");
     } else {
       setFormaPagoSeleccionada(idActual);
     }
@@ -259,18 +257,14 @@ function EditarProductoVentas() {
         </p>
         <div>
           <strong>Forma de Pago:</strong>
-          <select value={formaPagoSeleccionada} onChange={elegirMedioPago}>
-            <option value="">Seleccione una Opción</option>
-            {formasPago.map((forma) => (
-              <option key={forma.id_forma_pago} value={forma.id_forma_pago}>
-                {forma.descripcion}
-              </option>
-            ))}
-            <option value={-1}>Agregar nueva Forma de Pago</option>
-          </select>
+          <SelectorFormasPago
+            value={formaPagoSeleccionada || ""}
+            onChange={elegirMedioPago}
+            agregarNuevaFormaPago={true}
+          />
         </div>
         <p>
-          <strong>Cantidad Total:</strong> {productosVendidos.length}
+          <strong>Cantidad Total:</strong> {cantidadTotal}
         </p>
         <table className="productos-tabla">
           <thead>
@@ -317,17 +311,10 @@ function EditarProductoVentas() {
 
         <div className="form-group">
           <label htmlFor="select-producto">Producto:</label>
-          <select
-            id="select-producto"
-            onChange={(e) => handleSeleccionarProducto(e.target.value)}
-          >
-            <option value="">Seleccione un producto</option>
-            {productos.map((producto) => (
-              <option key={producto.id_producto} value={producto.id_producto}>
-                {producto.nombre_producto}
-              </option>
-            ))}
-          </select>
+          <SelectorProductos
+            value={productoSeleccionado?.id_producto || null}
+            onChange={(idProducto) => handleSeleccionarProducto(idProducto)}
+          />
         </div>
 
         {productoSeleccionado && (
@@ -380,7 +367,7 @@ function EditarProductoVentas() {
             handleGuardar(
               venta.idVenta,
               ventaTotal,
-              productosVendidos.length,
+              cantidadTotal,
               formaPagoSeleccionada
             )
           }
