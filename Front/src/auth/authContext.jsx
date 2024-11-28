@@ -2,7 +2,6 @@ import { createContext, useContext, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 
-
 const AuthContext = createContext();
 
 // Hook con sesion
@@ -69,43 +68,28 @@ export const AuthRol = ({ roles, children }) => {
 // Estado de autorizacion
 export const AuthStatus = () => {
   const { sesion, logout } = useAuth();
-  const location = useLocation();
   const navigate = useNavigate();
 
   if (!sesion) {
     return (
       <div>
         <span>No está conectado</span>
-        {/* <button
-          onClick={() =>
-            navigate("/", {
-              state: { from: location },
-              replace: true,
-            })
-          }
-          className="button-login"
-        >
-          Ingresar
-        </button> */}
       </div>
     );
   }
 
-  const logOut = ()=>{
-    if (window.confirm("¿Esta seguro que desea salir?")){
-      logout(() => navigate("/", { replace: true }))
+  const logOut = () => {
+    if (window.confirm("¿Esta seguro que desea salir?")) {
+      logout(() => navigate("/", { replace: true }));
     }
-  }
+  };
 
   return (
-    <div style={{ flexDirection: "row" }} className="user-info" >
-      <span >{sesion.username}</span>
+    <div style={{ flexDirection: "row" }} className="user-info">
+      <span>{sesion.username}</span>
       <button onClick={logOut} className="btn-auth">
         Salir
       </button>
-      {/* <button onClick={() => logout(() => navigate("/", { replace: true }))} className="btn-auth">
-        Salir
-      </button> */}
     </div>
   );
 };
