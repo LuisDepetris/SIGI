@@ -29,7 +29,7 @@
 
 .menu-desplegable {
   position: absolute;
-  top: 50px; /* Justo debajo del header */
+  top: 60px; /* Justo debajo del header */
   left: 0;
   background-color: #097dc5;
   width: 100%;

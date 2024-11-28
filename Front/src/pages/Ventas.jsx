@@ -14,6 +14,11 @@ function Ventas() {
 
   const navigate = useNavigate();
 
+  const totalPaginas = Math.ceil(totalVentas / limite);
+  const registrosInicio = totalVentas > 0 ? (paginaActual - 1) * limite + 1 : 0;
+  const registrosFin =
+    totalVentas > 0 ? Math.min(paginaActual * limite, totalVentas) : 0;
+
   useEffect(() => {
     const traerVentas = async () => {
       try {
@@ -31,7 +36,7 @@ function Ventas() {
         const data = await respuesta.json();
 
         setVentas(data.ventas);
-        setTotalVentas(data.ventas.length);
+        setTotalVentas(data.paginacion.total || 0);
       } catch (error) {
         console.error("Error al obtener las ventas:", error);
         alert("No se pudo obtener las ventas");
@@ -82,6 +87,10 @@ function Ventas() {
     }
   };
 
+  const handleLimitChange = (num) => {
+    setLimite(num);
+  };
+
   const sumaTotalVentas = ventas.reduce(
     (total, venta) => total + parseFloat(venta.venta_total),
     0
@@ -101,11 +110,10 @@ function Ventas() {
 
       <Paginacion
         paginaActual={paginaActual}
-        totalPaginas={Math.ceil(totalVentas / limite)}
+        totalPaginas={totalPaginas}
         onPaginaChange={(nuevaPagina) => setPaginaActual(nuevaPagina)}
-        registrosVisibles={`Registros ${
-          (paginaActual - 1) * limite + 1
-        }-${Math.min(paginaActual * limite, totalVentas)} de ${totalVentas}`}
+        registrosVisibles={`Registros ${registrosInicio}-${registrosFin} de ${totalVentas}`}
+        onLimitChange={handleLimitChange}
       />
 
       <table className="ventas-tabla">

@@ -25,7 +25,6 @@ authConfig();
 // Conecta la ruta "productos" con el router
 app.use("/productos", routerProductos);
 app.use("/ventas", routerVentas);
-app.use("/ventasProducto", routerVentas);
 app.use("/usuarios", routerUsuarios);
 app.use("/categorias", routerCategorias);
 app.use("/roles", routerRoles);

@@ -101,7 +101,7 @@ function EditarProductoVentas() {
     try {
       // Eliminar todos los productos existentes
       const respuestaDelete = await fetch(
-        `http://localhost:3000/ventas/${idVenta}/ventas_producto`,
+        `http://localhost:3000/ventas/${idVenta}/productos`,
         {
           method: "DELETE",
           headers: {
@@ -122,7 +122,7 @@ function EditarProductoVentas() {
         const { idProducto, cantidad, subTotal } = producto;
 
         const respuestaProductos = await fetch(
-          `http://localhost:3000/ventas/${idVenta}/ventas_producto`,
+          `http://localhost:3000/ventas/${idVenta}/productos`,
           {
             method: "POST",
             headers: {

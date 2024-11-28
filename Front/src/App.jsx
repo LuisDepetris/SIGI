@@ -163,9 +163,7 @@ function App() {
           element={
             <AuthPage>
               <AuthRol roles={["Administrador", "Editor", "Lector"]}>
-                <PaginaError
-                  mensaje={"No tienes permisos para acceder a esta ruta"}
-                />
+                <PaginaError mensaje={"No tienes permisos para acceder"} />
               </AuthRol>
             </AuthPage>
           }
