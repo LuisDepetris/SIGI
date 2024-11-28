@@ -24,7 +24,7 @@ const GestionUsuarios = () => {
     if (response.ok) {
       const { usuarios } = await response.json();
       const usuariosFiltrados = usuarios.filter(
-        (usuario) => usuario.inhabilitado == 0 && usuario.id_usuario != sesion.idUsuario
+        (usuario) => usuario.inhabilitado == 0
       );
       setUsuarios(usuariosFiltrados);
     }
@@ -190,12 +190,14 @@ const GestionUsuarios = () => {
                 >
                   ✏️
                 </button>
-                <button
+                {usuario.id_usuario != sesion.idUsuario && 
+                ( <button className="btn-eliminar" onClick={() => handleEliminar(usuario.id_usuario)}> 🗑️ </button> )}
+                {/* <button
                   className="btn-eliminar"
                   onClick={()=>handleEliminar(usuario.id_usuario)}
                 >
                   🗑️
-                </button>
+                </button> */}
               </td>
               <td>{usuario.id_usuario}</td>
               <td>{usuario.username}</td>
