@@ -488,19 +488,14 @@ BEGIN
 END //
 DELIMITER ;
 
--- SOFT DELETE VENTAS_PRODUCTO
+-- DELETE VENTAS_PRODUCTO
 DELIMITER //
-CREATE PROCEDURE spEliminarProductoDeUnaVenta(
-    IN idVentaProducto INT,
-    IN idProducto INT,
-    IN cantidad INT
+CREATE PROCEDURE spEliminarProductosDeVenta(
+    IN idVenta INT
 )
 BEGIN
-    DELETE FROM ventas_producto
-    WHERE id_venta_producto = idVentaProducto;
-    
-    CALL spModificarStockActual(idProducto, cantidad * (-1));
-
+    DELETE FROM 
+    ventas_producto WHERE id_venta = idVenta;
 END //
 DELIMITER ;
 

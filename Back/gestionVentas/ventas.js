@@ -232,44 +232,6 @@ router.post(
   }
 );
 
-// router.delete(
-//   "/:id/ventas_producto/",
-//   passport.authenticate("jwt", { session: false }),
-//   validarPermisosUsuario(["Administrador", "Editor"]),
-//   validarAtributosVentaProducto(),
-//   async (req, res) => {
-//     const validacion = validationResult(req);
-//     if (!validacion.isEmpty()) {
-//       res.status(400).send({ errores: validacion.array() });
-//       return;
-//     }
-
-//     const idVentaProducto = req.body.idVentaProducto;
-//     const idProducto = req.body.idProducto;
-//     const cantidad = req.body.cantidad;
-
-//     try {
-//       const sqlEliminarProductoDeUnaVenta =
-//         "CALL spEliminarProductoDeUnaVenta(?, ?, ?)";
-//       await db.execute(sqlEliminarProductoDeUnaVenta, [
-//         idVentaProducto,
-//         idProducto,
-//         cantidad,
-//       ]);
-
-//       return res.status(201).send({ id: { idVentaProducto } });
-//     } catch (error) {
-//       console.error(
-//         "Error al eliminar el producto de la venta:",
-//         error.message
-//       );
-//       return res
-//         .status(500)
-//         .send({ error: "Error al eliminar el producto de la venta." });
-//     }
-//   }
-// );
-
 router.delete(
   "/:id/ventas_producto",
   passport.authenticate("jwt", { session: false }),
@@ -278,18 +240,27 @@ router.delete(
     const idVenta = req.params.id;
 
     try {
-      const sqlEliminarProductosDeVenta =
-        "DELETE FROM ventas_producto WHERE id_venta = ?";
+      const sqlObtenerProductosDeVenta = "CALL spObtenerProductosDeVenta(?)";
+      const sqlModificarStockActual = "CALL spModificarStockActual(?, ?)";
+      const sqlEliminarProductosDeVenta = "CALL spEliminarProductosDeVenta(?)";
+
+      const [productos] = await db.execute(sqlObtenerProductosDeVenta, [idVenta]);
+        for (const producto of productos[0]) {
+          const idProducto = producto.id_producto;
+          const cantidad = producto.cantidad;
+          await db.execute(sqlModificarStockActual, [idProducto, -cantidad]);
+        }
+  
       await db.execute(sqlEliminarProductosDeVenta, [idVenta]);
 
       return res
         .status(200)
-        .send({ mensaje: "Productos eliminados correctamente." });
+        .send({ mensaje: "Producto/s eliminados correctamente." });
     } catch (error) {
-      console.error("Error al eliminar productos de la venta:", error.message);
+      console.error("Error al eliminar producto/s de la venta:", error.message);
       return res
         .status(500)
-        .send({ error: "Error al eliminar productos de la venta." });
+        .send({ error: "Error al eliminar producto/s de la venta." });
     }
   }
 );
