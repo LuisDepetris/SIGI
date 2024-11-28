@@ -71,6 +71,11 @@ function AgregarProductoVentas() {
     navigate("/ventas");
   };
 
+  const cantidadTotal = productosVendidos.reduce(
+    (acumulador, producto) => acumulador + producto.cantidad,
+    0
+  );
+
   const handleGuardar = async () => {
     if (productosVendidos.length === 0) {
       setError("Debe agregar un producto");
@@ -86,7 +91,7 @@ function AgregarProductoVentas() {
         },
         body: JSON.stringify({
           ventaTotal: ventaTotal,
-          cantidadTotal: cantidad,
+          cantidadTotal: cantidadTotal,
           idFormaPago: formaPagoSeleccionada,
           productos: productosVendidos,
         }),
@@ -167,11 +172,6 @@ function AgregarProductoVentas() {
       setFormaPagoSeleccionada(idActual);
     }
   };
-
-  const cantidadTotal = productosVendidos.reduce(
-    (acumulador, producto) => acumulador + producto.cantidad,
-    0
-  );
 
   return (
     <div className="pagina-completa">
