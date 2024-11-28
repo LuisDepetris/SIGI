@@ -14,8 +14,8 @@ import GestionFormPagos from "./pages/GestionFormPagos";
 import { AuthPage, AuthRol } from "./auth/authContext";
 import GestionUsuarios from "./pages/GestionUsuarios";
 import Login from "./pages/Login";
-import NoPermitido from "./pages/NoPermitido";
 import EditarProductoVentas from "./pages/EditarProductoVenta";
+import PaginaError from "./pages/PaginaError";
 
 function App() {
   return (
@@ -163,17 +163,15 @@ function App() {
           path="/prohibido"
           element={
             <AuthRol roles={["Administrador", "Editor", "Lector"]}>
-              <NoPermitido />
+              <PaginaError
+                mensaje={"No tienes permisos para acceder a esta ruta"}
+              />
             </AuthRol>
           }
         />
         <Route
           path="*"
-          element={
-            <div style={{ margin: "100px" }}>
-              <h1>404: Not Found</h1>
-            </div>
-          }
+          element={<PaginaError mensaje={"La ruta que buscas no existe"} />}
         />
       </Route>
     </Routes>
