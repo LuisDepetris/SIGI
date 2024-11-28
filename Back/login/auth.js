@@ -30,9 +30,10 @@ router.post("/login", validarAtributosLogin(), async (req, res) => {
 
   const { username, password } = req.body;
 
-  const [usuarios] = await db.execute("select * from usuarios where username=?", [
-    username,
-  ]);
+  const [usuarios] = await db.execute(
+    "select * from usuarios where username=?",
+    [username]
+  );
 
   if (usuarios.length === 0) {
     return res.status(400).send({ error: "Usuario o contraseña inválida" });
@@ -57,9 +58,7 @@ router.post("/login", validarAtributosLogin(), async (req, res) => {
 
   // Crear jwt
   const payload = { idUsuario: usuarios[0].id_usuario, rol: roles[0].nombre };
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: "2h",
-  });
+  const token = jwt.sign(payload, process.env.JWT_SECRET);
 
   // Enviar jwt
   res.send({
