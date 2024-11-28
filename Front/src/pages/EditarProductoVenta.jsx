@@ -74,6 +74,7 @@ function EditarProductoVentas() {
 
     setProductoSeleccionado(producto);
     setCantidad(1);
+    setError('');
   };
 
   const handleCantidadChange = (e) => {
@@ -185,7 +186,7 @@ function EditarProductoVentas() {
       return;
     }
 
-    if (cantidad > productoSeleccionado.stockActual) {
+    if (cantidad > productoSeleccionado.stock_actual) {
       setError("La cantidad excede el stock disponible.");
       return;
     }

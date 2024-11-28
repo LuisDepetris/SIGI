@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FormCategoria from "../components/FormCategoria";
+import { useAuth } from "../auth/authContext";
 import "../styles/GestionCategoria.css";
 
 const GestionFormPagos = () => {
@@ -8,6 +9,7 @@ const GestionFormPagos = () => {
   const [formaSeleccionada, setFormaSeleccionada] = useState(null);
   const [modoEdicion, setModoEdicion] = useState(false);
   const [error, setError] = useState({});
+  const { sesion } = useAuth();
   const navigate = useNavigate();
 
   const fetchPagos = async () => {
@@ -42,7 +44,10 @@ const GestionFormPagos = () => {
   const editarFormaPago = async (id, descripcion) => {
     const response = await fetch(`http://localhost:3000/Pagos/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sesion.token}`
+      },
       body: JSON.stringify({ descripcion }),
     });
     if (response.ok) {
@@ -53,6 +58,9 @@ const GestionFormPagos = () => {
       );
       setModoEdicion(false);
       setFormaSeleccionada(null);
+    } else {
+      const { errores } = await response.json();
+      setError(errores);
     }
   };
 
@@ -60,9 +68,15 @@ const GestionFormPagos = () => {
     if (window.confirm("¿Estás seguro de eliminar esta forma de pago?")) {
       const response = await fetch(`http://localhost:3000/Pagos/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${sesion.token}`,
+        }
       });
       if (response.ok) {
         setFormasPago(formasPago.filter((cat) => cat.id_forma_pago !== id));
+      } else {
+        const { errores } = await response.json();
+        setError(errores);
       }
     }
   };
@@ -76,6 +90,7 @@ const GestionFormPagos = () => {
           modoEdicion
             ? editarFormaPago(formaSeleccionada.id_forma_pago, descripcion)
             : agregarFormaPago(descripcion);
+            setError('');
         }}
         pagos={modoEdicion ? formaSeleccionada : null}
         tipoEntidad="pago"
@@ -93,6 +108,7 @@ const GestionFormPagos = () => {
               onClick={() => {
                 setFormaSeleccionada(pago);
                 setModoEdicion(true);
+                setError('');
               }}
               className='saveButton button-categoria'
             >

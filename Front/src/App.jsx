@@ -139,6 +139,16 @@ function App() {
         }
         />
         <Route
+          path="AgregarProductoVentas/GestionFormPagos"
+          element={
+            <AuthPage>
+              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
+                <GestionFormPagos />
+              </AuthRol>
+          </AuthPage>      
+        }
+        />
+        <Route
           path="usuarios"
           element={
             <AuthPage>

@@ -61,6 +61,9 @@ const GestionCategorias = () => {
       );
       setModoEdicion(false);
       setCategoriaSeleccionada(null);
+    } else {
+      const { errores } = await response.json();
+      setError(errores);
     }
   };
 
@@ -85,8 +88,9 @@ const GestionCategorias = () => {
         errores={error}
         onGuardar={(descripcion) => {
           modoEdicion
-            ? editarCategoria(categoriaSeleccionada.id_categoria, descripcion)
-            : agregarCategoria(descripcion);
+          ? editarCategoria(categoriaSeleccionada.id_categoria, descripcion)
+          : agregarCategoria(descripcion);
+          setError('');
         }}
         categoria={modoEdicion ? categoriaSeleccionada : null}
         tipoEntidad="categoria"
@@ -104,6 +108,7 @@ const GestionCategorias = () => {
               onClick={() => {
                 setCategoriaSeleccionada(cat);
                 setModoEdicion(true);
+                setError('');
               }}
               className='saveButton button-categoria'
             >

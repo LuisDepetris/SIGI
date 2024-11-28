@@ -75,7 +75,7 @@ router.post("/",
 
 router.delete("/:id",
     passport.authenticate("jwt", { session: false }),
-    validarPermisosUsuario(["Administrador", "Editor"]),
+    validarPermisosUsuario(["Administrador"]),
     validarId(), 
     async (req, res) =>{
         const validacion = validationResult(req);
