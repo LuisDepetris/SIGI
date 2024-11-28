@@ -77,6 +77,11 @@ function AgregarProductoVentas() {
   );
 
   const handleGuardar = async () => {
+    if (formaPagoSeleccionada === "" || isNaN(formaPagoSeleccionada)) {
+      alert("Seleccione la forma de pago para continuar");
+      return;
+    }
+
     if (productosVendidos.length === 0) {
       setError("Debe agregar un producto");
       return;
