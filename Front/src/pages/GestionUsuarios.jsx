@@ -90,6 +90,7 @@ const GestionUsuarios = () => {
     });
     if (response.ok) {
       setUsuario({
+        id_usuario : 0,
         username: "",
         password: "",
         id_rol: 0
@@ -109,6 +110,7 @@ const GestionUsuarios = () => {
 
   const handleCancelar = () =>{
     setUsuario({
+      id_usuario: 0,
       username: "",
       password: "",
       id_rol: 0
