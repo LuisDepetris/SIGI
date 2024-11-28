@@ -74,10 +74,17 @@ const GestionFormPagos = () => {
       });
       if (response.ok) {
         setFormasPago(formasPago.filter((cat) => cat.id_forma_pago !== id));
+        setError('');
       } else {
-        const { errores } = await response.json();
-        setError(errores);
+        const { error } = await response.json();
+        alert(
+          `No se pudo eliminar la forma de pago: ${
+            error || "Error desconocido"
+          }`
+        );
+        setError('');
       }
+
     }
   };
 
