@@ -68,12 +68,6 @@ router.post("/",
 
     const passwordHashed = await bcrypt.hash(password, 10);
     try {
-
-      // const [usuarios] = await db.execute("CALL spVerUsuarios");
-      // const existeUsuario = usuarios[0].some((usuario) =>usuario.username == username);
-      // if(existeUsuario){
-      //   return res.status(400).send({ errores: { username: { msg: "El nombre de usuario ya está en uso. Por favor, elija otro." }} });
-      // }
       const sql = "CALL spNuevoUsuario(?,?,?)";
       await db.execute(sql, [username, passwordHashed, idRol]);
 
