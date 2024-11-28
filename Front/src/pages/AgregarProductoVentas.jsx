@@ -65,6 +65,7 @@ function AgregarProductoVentas() {
     );
     setProductoSeleccionado(producto);
     setCantidad(1);
+    setError('');
   };
 
   const handleCantidadChange = (e) => {
@@ -102,6 +103,7 @@ function AgregarProductoVentas() {
         throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
       }
 
+      setError('');
       navigate("/ventas", { replace: true });
     } catch (error) {
       console.error("Error al guardar el producto:", error);
