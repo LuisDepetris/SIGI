@@ -77,6 +77,15 @@ const GestionCategorias = () => {
       });
       if (response.ok) {
         setCategorias(categorias.filter((cat) => cat.id_categoria !== id));
+        setError('');
+      } else {
+        const { error } = await response.json();
+        alert(
+          `No se pudo eliminar el producto: ${
+            error || "Error desconocido"
+          }`
+        );
+        setError('');
       }
     }
   };
