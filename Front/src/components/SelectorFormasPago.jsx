@@ -14,8 +14,11 @@ function SelectorFormasPago({ value, onChange, agregarNuevaFormaPago }) {
           throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
         }
 
-        const data = await respuesta.json();
-        setFormasPago(data.formasPago);
+        const {formasPago} = await respuesta.json();
+        const pagosHabilitados = formasPago.filter(
+          (pagos) => pagos.inhabilitado === 0
+        );
+        setFormasPago(pagosHabilitados);
       } catch (error) {
         console.error("Error al obtener las formas de pago:", error);
         setError("No se pudo cargar la información de las formas de pago.");
