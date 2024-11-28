@@ -129,6 +129,26 @@ function App() {
           }
         />
         <Route
+          path="EditarProductoVentas/GestionFormPagos"
+          element={
+            <AuthPage>
+              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
+                <GestionFormPagos />
+              </AuthRol>
+          </AuthPage>      
+        }
+        />
+        <Route
+          path="AgregarProductoVentas/GestionFormPagos"
+          element={
+            <AuthPage>
+              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
+                <GestionFormPagos />
+              </AuthRol>
+          </AuthPage>      
+        }
+        />
+        <Route
           path="usuarios"
           element={
             <AuthPage>
@@ -152,10 +172,6 @@ function App() {
         <Route
           path="*"
           element={<PaginaError mensaje={"La ruta que buscas no existe"} />}
-        />
-        <Route
-          path="ventas/:id/formas_de_pago"
-          element={<GestionFormPagos />}
         />
       </Route>
     </Routes>

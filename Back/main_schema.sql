@@ -27,7 +27,7 @@ DROP PROCEDURE IF EXISTS spCrearVenta;
 DROP PROCEDURE IF EXISTS spModificarVenta;
 DROP PROCEDURE IF EXISTS spEliminarVenta;
 DROP PROCEDURE IF EXISTS spAgregarProductoAVenta;
-DROP PROCEDURE IF EXISTS spEliminarProductoDeUnaVenta;
+DROP PROCEDURE IF EXISTS spEliminarProductosDeVenta;
 DROP PROCEDURE IF EXISTS spModificarStockActual;
 DROP PROCEDURE IF EXISTS spObtenerProductosDeVenta;
 DROP PROCEDURE IF EXISTS spVerRoles;
