@@ -9,10 +9,19 @@ import validarPermisosUsuario from "../middlewares/validarPermisosUsuario.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+  const { offset = 0, limit = 10 } = req.query;
+
   try {
-    const sql = "CALL spVerVentas()";
-    const [ventas] = await db.execute(sql);
-    return res.status(200).send({ ventas: ventas[0] });
+    const sql = "CALL spVerVentas(? , ?)";
+    const [ventas] = await db.execute(sql, [offset, limit]);
+
+    const sqlTotalVentas =
+      "SELECT COUNT(*) AS total FROM ventas WHERE inhabilitada = FALSE;";
+    const [total] = await db.execute(sqlTotalVentas);
+
+    return res
+      .status(200)
+      .send({ ventas: ventas[0], paginacion: { total: total[0].total } });
   } catch (error) {
     return res.status(500).send({ error: "Error al traer ventas" });
   }
@@ -244,13 +253,15 @@ router.delete(
       const sqlModificarStockActual = "CALL spModificarStockActual(?, ?)";
       const sqlEliminarProductosDeVenta = "CALL spEliminarProductosDeVenta(?)";
 
-      const [productos] = await db.execute(sqlObtenerProductosDeVenta, [idVenta]);
-        for (const producto of productos[0]) {
-          const idProducto = producto.id_producto;
-          const cantidad = producto.cantidad;
-          await db.execute(sqlModificarStockActual, [idProducto, -cantidad]);
-        }
-  
+      const [productos] = await db.execute(sqlObtenerProductosDeVenta, [
+        idVenta,
+      ]);
+      for (const producto of productos[0]) {
+        const idProducto = producto.id_producto;
+        const cantidad = producto.cantidad;
+        await db.execute(sqlModificarStockActual, [idProducto, -cantidad]);
+      }
+
       await db.execute(sqlEliminarProductosDeVenta, [idVenta]);
 
       return res

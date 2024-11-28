@@ -389,13 +389,27 @@ DELIMITER ;
 
 -- GET ALL VENTAS
 DELIMITER //
-CREATE PROCEDURE spVerVentas()
+CREATE PROCEDURE spVerVentas(
+    IN filaInicial INT, 
+    IN limite INT
+)
 BEGIN 
-		SELECT v.id_venta, v.venta_total, v.cantidad_total, fp.descripcion as forma_pago, v.fecha 
+
+    SET limite = IFNULL(limite, 10);
+    SET filaInicial = IFNULL(filaInicial, 0);
+
+    SET @consulta = CONCAT('
+        SELECT v.id_venta, v.venta_total, v.cantidad_total, fp.descripcion as forma_pago, v.fecha 
         FROM ventas v
         JOIN formas_pago fp
         ON v.id_forma_pago = fp.id_forma_pago
-        WHERE inhabilitada = FALSE;
+        WHERE v.inhabilitada = FALSE
+        LIMIT ', filaInicial, ', ', limite
+    );
+
+    PREPARE sp_get_ventas FROM @consulta;
+    EXECUTE sp_get_ventas;
+    DEALLOCATE PREPARE sp_get_ventas;
 END//
 DELIMITER ;
 
