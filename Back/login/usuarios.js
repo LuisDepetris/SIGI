@@ -6,6 +6,7 @@ import { validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import validarPermisosUsuario from "../middlewares/validarPermisosUsuario.js";
+import verificarUsuarioExistente from "../middlewares/verificarUsuarioExistente.js";
 
 const router = express.Router();
 
@@ -54,6 +55,7 @@ router.post("/",
   passport.authenticate("jwt", { session: false }),
   validarPermisosUsuario(["Administrador"]),
   validarAtributosUsuario(),
+  verificarUsuarioExistente,
   async (req, res) => {
     const validacion = validationResult(req);
     if (!validacion.isEmpty()) {
@@ -79,6 +81,7 @@ router.put("/:id",
   passport.authenticate("jwt", { session: false }),
   validarPermisosUsuario(["Administrador"]),
   validarAtributosUsuario(),
+  verificarUsuarioExistente,
   async (req, res) => {
     const validacion = validationResult(req);
     if (!validacion.isEmpty()) {
