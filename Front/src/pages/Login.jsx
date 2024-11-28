@@ -31,15 +31,21 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
-      <form onSubmit={onSubmit}>
-        <label htmlFor="usuario">Usuario:</label>
-        <input name="usuario" type="text" />
-        <label htmlFor="password">Contraseña:</label>
-        <input name="password" type="password" />
-        <button type="submit">Ingresar</button>
+    <div className="container container-login">
+      <form className="form-login" onSubmit={onSubmit}>
+        <label htmlFor="usuario" className="label-login">
+          Usuario:
+        </label>
+        <input name="usuario" type="text" className="input-login" />
+        <label htmlFor="password" className="label-login">
+          Contraseña:
+        </label>
+        <input name="password" type="password" className="input-login" />
+        <button type="submit" className="button-login">
+          Ingresar
+        </button>
+        {error && <p className="errorUsuario">Usuario o contraseña inválido</p>}
       </form>
-      {error && <p>Usuario o contraseña inválido</p>}
     </div>
   );
 };

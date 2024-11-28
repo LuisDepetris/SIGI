@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FormCategoria from "../components/FormCategoria";
-import styles from "../styles/GestionCategoria.module.css";
+import "../styles/GestionCategoria.css";
 import { useAuth } from "../auth/authContext";
 
 const GestionCategorias = () => {
@@ -12,17 +12,18 @@ const GestionCategorias = () => {
   const navigate = useNavigate();
   const { sesion } = useAuth();
 
+  const fetchCategorias = async () => {
+    const response = await fetch("http://localhost:3000/categorias");
+    if (response.ok) {
+      const data = await response.json();
+      const categoriasFiltradas = data.categorias.filter(
+        (cat) => cat.inhabilitado == 0
+      );
+      setCategorias(categoriasFiltradas);
+    }
+  };
+  
   useEffect(() => {
-    const fetchCategorias = async () => {
-      const response = await fetch("http://localhost:3000/categorias");
-      if (response.ok) {
-        const data = await response.json();
-        const categoriasFiltradas = data.categorias.filter(
-          (cat) => cat.inhabilitado == 0
-        );
-        setCategorias(categoriasFiltradas);
-      }
-    };
     fetchCategorias();
   }, []);
 
@@ -36,8 +37,7 @@ const GestionCategorias = () => {
       body: JSON.stringify({ descripcion: nuevaCategoria }),
     });
     if (response.ok) {
-      const nueva = await response.json();
-      setCategorias([...categorias, nueva.categoria]);
+      fetchCategorias()
     } else {
       const { errores } = await response.json();
       setError(errores);
@@ -79,7 +79,7 @@ const GestionCategorias = () => {
   };
 
   return (
-    <div className={styles.gestionCategorias}>
+    <div className='gestionCategorias'>
       <h2>Gestión de Categorías</h2>
       <FormCategoria
         errores={error}
@@ -89,26 +89,27 @@ const GestionCategorias = () => {
             : agregarCategoria(descripcion);
         }}
         categoria={modoEdicion ? categoriaSeleccionada : null}
+        tipoEntidad="categoria"
         onCancel={() => {
           navigate(-1);
           setModoEdicion(false);
           setCategoriaSeleccionada(null);
         }}
       />
-      <ul className={styles.formContainer}>
+      <ul className='formContainer ul-categoria'>
         {categorias.map((cat) => (
-          <li key={cat.id_categoria} className={styles.formGroup}>
+          <li key={cat.id_categoria} className='formGroup'>
             {cat.descripcion}
             <button
               onClick={() => {
                 setCategoriaSeleccionada(cat);
                 setModoEdicion(true);
               }}
-              className={styles.saveButton}
+              className='saveButton button-categoria'
             >
               Editar
             </button>
-            <button onClick={() => eliminarCategoria(cat.id_categoria)} className={styles.cancelButton}>
+            <button onClick={() => eliminarCategoria(cat.id_categoria)} className='cancelButton button-categoria'>
               Eliminar
             </button>
           </li>

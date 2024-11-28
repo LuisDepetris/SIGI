@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import styles from "../styles/DetalleProducto.module.css";
+import "../styles/DetalleProducto.css";
 import { useNavigate, useParams } from "react-router-dom";
 
 function DetalleProducto() {
@@ -52,43 +52,43 @@ function DetalleProducto() {
   );
 
   return (
-    <div className={styles.pageContainer}>
-      <h2 className={styles.pageTitle}>Consultar Producto</h2>
+    <div className='pageContainer'>
+      <h2 className='pageTitle'>Consultar Producto</h2>
       {producto ? (
         <>
-          <div className={styles.viewGroup}>
+          <div className='viewGroup'>
             <label>ID Producto:</label>
             <div>{producto.id_producto}</div>
           </div>
-          <div className={styles.viewGroup}>
+          <div className='viewGroup'>
             <label>Nombre del Producto:</label>
             <div>{producto.nombre_producto}</div>
           </div>
-          <div className={styles.viewGroup}>
+          <div className='viewGroup'>
             <label>Stock Actual:</label>
             <div>{producto.stock_actual}</div>
           </div>
-          <div className={styles.viewGroup}>
+          <div className='viewGroup'>
             <label>Precio de Lista:</label>
             <div>${producto.precio_lista}</div>
           </div>
-          <div className={styles.viewGroup}>
+          <div className='viewGroup'>
             <label>Descuento 1:</label>
             <div>{producto.descuento_uno}%</div>
           </div>
-          <div className={styles.viewGroup}>
+          <div className='viewGroup'>
             <label>Descuento 2:</label>
             <div>{producto.descuento_dos}%</div>
           </div>
-          <div className={styles.viewGroup}>
+          <div className='viewGroup'>
             <label>Incremento:</label>
             <div>{producto.incremento}%</div>
           </div>
-          <div className={styles.viewGroup}>
+          <div className='viewGroup'>
             <label>Precio Final:</label>
             <div>${producto.precio_final}</div>
           </div>
-          <div className={styles.viewGroup}>
+          <div className='viewGroup'>
             <label>Categoría:</label>
             <div>
               {categoriaFiltrada
@@ -98,12 +98,12 @@ function DetalleProducto() {
           </div>
           <button
             onClick={() => navigate(-1)}
-            className={`${styles.button} ${styles.cancelButton}`}
+            className='button cancelButton'
           >
             Cancelar
           </button>
           <button
-            className={`${styles.button} ${styles.saveButton}`}
+            className='button saveButton'
             onClick={handleEdit}
           >
             Editar

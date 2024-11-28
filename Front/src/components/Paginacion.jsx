@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/Paginacion.css";
 
 const Paginacion = ({
@@ -9,6 +9,14 @@ const Paginacion = ({
   registrosVisibles,
 }) => {
   const paginas = Array.from({ length: totalPaginas }, (_, index) => index + 1);
+
+  const [limiteSeleccionado, setLimiteSeleccionado] = useState(10);
+
+  const handleLimitChange = (e) => {
+    const nuevoLimite = parseInt(e.target.value);
+    setLimiteSeleccionado(nuevoLimite);
+    onLimitChange(nuevoLimite);
+  };
 
   return (
     <div className="paginacion">

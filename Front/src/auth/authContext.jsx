@@ -1,5 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import "../styles/Login.css";
+
 
 const AuthContext = createContext();
 
@@ -14,11 +16,11 @@ export const AuthProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("sesion")) || null
   );
 
-  const login = async (email, password, ok, error) => {
+  const login = async (username, password, ok, error) => {
     const response = await fetch("http://localhost:3000/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username, password }),
     });
     if (!response.ok) {
       error();
@@ -74,26 +76,36 @@ export const AuthStatus = () => {
     return (
       <div>
         <span>No está conectado</span>
-        <button
+        {/* <button
           onClick={() =>
             navigate("/", {
               state: { from: location },
               replace: true,
             })
           }
+          className="button-login"
         >
           Ingresar
-        </button>
+        </button> */}
       </div>
     );
   }
 
+  const logOut = ()=>{
+    if (window.confirm("¿Esta seguro que desea salir?")){
+      logout(() => navigate("/", { replace: true }))
+    }
+  }
+
   return (
-    <div style={{ flexDirection: "row" }}>
-      <span>{sesion.email}</span>
-      <button onClick={() => logout(() => navigate("/", { replace: true }))}>
+    <div style={{ flexDirection: "row" }} className="user-info" >
+      <span >{sesion.username}</span>
+      <button onClick={logOut} className="btn-auth">
         Salir
       </button>
+      {/* <button onClick={() => logout(() => navigate("/", { replace: true }))} className="btn-auth">
+        Salir
+      </button> */}
     </div>
   );
 };

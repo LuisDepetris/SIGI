@@ -10,10 +10,12 @@ import Layout from "./components/Layout";
 import VentanaPrincipal from "./pages/VentanaPrincipal";
 import DetalleVentas from "./pages/DetalleVentas";
 import AgregarProductoVentas from "./pages/AgregarProductoVentas";
+import GestionFormPagos from "./pages/GestionFormPagos";
 import { AuthPage, AuthRol } from "./auth/authContext";
 import GestionUsuarios from "./pages/GestionUsuarios";
 import Login from "./pages/Login";
 import NoPermitido from "./pages/NoPermitido";
+import EditarProductoVentas from "./pages/EditarProductoVenta";
 
 function App() {
   return (
@@ -107,6 +109,26 @@ function App() {
           }
         />
         <Route
+          path="/EditarProductoVentas"
+          element={
+            <AuthPage>
+              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
+                <EditarProductoVentas />
+              </AuthRol>
+            </AuthPage>
+          }
+        />
+        <Route
+          path="/GestionFormPagos"
+          element={
+            <AuthPage>
+              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
+                <GestionFormPagos />
+              </AuthRol>
+            </AuthPage>
+          }
+        />
+        <Route
           path="usuarios"
           element={
             <AuthPage>
@@ -132,6 +154,10 @@ function App() {
               <h1>404: Not Found</h1>
             </div>
           }
+        />
+        <Route
+          path="ventas/:id/formas_de_pago"
+          element={<GestionFormPagos />}
         />
       </Route>
     </Routes>

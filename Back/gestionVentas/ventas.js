@@ -4,6 +4,8 @@ import validarId from "../middlewares/validarId.js";
 import validarAtributosVenta from "../middlewares/validarAtributosVenta.js";
 import validarAtributosVentaProducto from "../middlewares/validarAtributosVentaProducto.js";
 import { validationResult } from "express-validator";
+import passport from "passport";
+import validarPermisosUsuario from "../middlewares/validarPermisosUsuario.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -113,128 +115,154 @@ router.post("/", validarAtributosVenta(), async (req, res) => {
   }
 });
 
-router.put("/:id", validarId(), validarAtributosVenta(), async (req, res) => {
-  const validacion = validationResult(req);
-  if (!validacion.isEmpty()) {
-    res.status(400).send({ errores: validacion.array() });
-    return;
-  }
-
-  const idVenta = Number(req.params.id);
-  const ventaTotal = req.body.ventaTotal;
-  const cantidadTotal = req.body.cantidadTotal;
-  const idFormaPago = req.body.idFormaPago;
-
-  const sqlModificarVenta = "CALL spModificarVenta(?, ?, ?, ?)";
-
-  try {
-    await db.execute(sqlModificarVenta, [
-      idVenta,
-      ventaTotal,
-      cantidadTotal,
-      idFormaPago,
-    ]);
-
-    return res.status(201).send({
-      ventaModificada: { idVenta, ventaTotal, cantidadTotal, idFormaPago },
-    });
-  } catch (error) {
-    console.error("Error al editar la venta: ", error.message);
-    return res.status(500).send({ error: "Error al editar la venta." });
-  }
-});
-
-router.delete("/:id", validarId(), async (req, res) => {
-  const validacion = validationResult(req);
-  if (!validacion.isEmpty()) {
-    res.status(400).send({ errores: validacion.array() });
-    return;
-  }
-
-  const id = Number(req.params.id);
-
-  const sqlObtenerProductosDeVenta = "CALL spObtenerProductosDeVenta(?)";
-  const sqlEliminarVenta = "CALL spEliminarVenta(?)";
-  const sqlModificarStockActual = "CALL spModificarStockActual(?, ?)";
-
-  try {
-
-    const [productos] = await db.execute(sqlObtenerProductosDeVenta, [id]);
-    for(const producto of productos[0]){
-      const idProducto = producto.id_producto;
-      const cantidad = producto.cantidad;
-      await db.execute(sqlModificarStockActual, [idProducto, -cantidad]);
+router.put(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  validarPermisosUsuario(["Administrador", "Editor"]),
+  validarId(),
+  validarAtributosVenta(),
+  async (req, res) => {
+    const validacion = validationResult(req);
+    if (!validacion.isEmpty()) {
+      res.status(400).send({ errores: validacion.array() });
+      return;
     }
 
-    await db.execute(sqlEliminarVenta, [id]);
-    return res.status(200).send({ id });
-  } catch (error) {
-    console.error("Error al eliminar la venta: ", error.message);
-    return res.status(500).send({ error: "Error al eliminar la venta." });
-  }
-});
+    const idVenta = Number(req.params.id);
+    const ventaTotal = req.body.ventaTotal;
+    const cantidadTotal = req.body.cantidadTotal;
+    const idFormaPago = req.body.idFormaPago;
 
-router.post("/:id/ventas_producto", validarId(), validarAtributosVentaProducto(), async (req, res) => {
-  const validacion = validationResult(req);
-  if (!validacion.isEmpty()) {
-    res.status(400).send({ errores: validacion.array() });
-    return;
-  }
+    const sqlModificarVenta = "CALL spModificarVenta(?, ?, ?, ?)";
 
-  const idVenta = Number(req.params.id);
-  const idProducto = req.body.idProducto;
-  const cantidad = req.body.cantidad;
-  const ventaSubTotal = req.body.ventaSubTotal;
-
-  try {
-    const sqlAgregarProductoAVenta = "CALL spAgregarProductoAVenta(?, ?, ?, ?)";
-    const resultadoProductoInsertadoAVenta = await db.execute(
-      sqlAgregarProductoAVenta,
-      [idVenta, idProducto, cantidad, ventaSubTotal]
-    );
-    const id_ventas_producto =
-      resultadoProductoInsertadoAVenta[0][0][0].id_venta_producto;
-
-    return res.status(201).send({
-      productoAgregado: {
-        id_ventas_producto,
+    try {
+      await db.execute(sqlModificarVenta, [
         idVenta,
-        idProducto,
-        cantidad,
-        ventaSubTotal,
-      },
-    });
-  } catch (error) {
-    console.error("Error al agregar producto:", error.message);
-    return res.status(500).send({ error: "Error al agregar producto." });
+        ventaTotal,
+        cantidadTotal,
+        idFormaPago,
+      ]);
+
+      return res.status(201).send({
+        ventaModificada: { idVenta, ventaTotal, cantidadTotal, idFormaPago },
+      });
+    } catch (error) {
+      console.error("Error al editar la venta: ", error.message);
+      return res.status(500).send({ error: "Error al editar la venta." });
+    }
   }
-});
+);
 
-router.delete("/:id/ventas_producto/", validarAtributosVentaProducto(), async (req, res) => {
-  const validacion = validationResult(req);
-  if (!validacion.isEmpty()) {
-    res.status(400).send({ errores: validacion.array() });
-    return;
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  validarPermisosUsuario(["Administrador"]),
+  validarId(),
+  async (req, res) => {
+    const validacion = validationResult(req);
+    if (!validacion.isEmpty()) {
+      res.status(400).send({ errores: validacion.array() });
+      return;
+    }
+
+    const id = Number(req.params.id);
+
+    const sqlObtenerProductosDeVenta = "CALL spObtenerProductosDeVenta(?)";
+    const sqlEliminarVenta = "CALL spEliminarVenta(?)";
+    const sqlModificarStockActual = "CALL spModificarStockActual(?, ?)";
+
+    try {
+      const [productos] = await db.execute(sqlObtenerProductosDeVenta, [id]);
+      for (const producto of productos[0]) {
+        const idProducto = producto.id_producto;
+        const cantidad = producto.cantidad;
+        await db.execute(sqlModificarStockActual, [idProducto, -cantidad]);
+      }
+
+      await db.execute(sqlEliminarVenta, [id]);
+      return res.status(200).send({ id });
+    } catch (error) {
+      console.error("Error al eliminar la venta: ", error.message);
+      return res.status(500).send({ error: "Error al eliminar la venta." });
+    }
   }
+);
 
-  const idVentaProducto = req.body.idVentaProducto;
-  const idProducto = req.body.idProducto;
-  const cantidad = req.body.cantidad;
+router.post(
+  "/:id/ventas_producto",
+  passport.authenticate("jwt", { session: false }),
+  validarPermisosUsuario(["Administrador", "Editor"]),
+  validarId(),
+  validarAtributosVentaProducto(),
+  async (req, res) => {
+    const validacion = validationResult(req);
+    if (!validacion.isEmpty()) {
+      res.status(400).send({ errores: validacion.array() });
+      return;
+    }
 
-  try {
-    const sqlEliminarProductoDeUnaVenta =
-      "CALL spEliminarProductoDeUnaVenta(?, ?, ?)";
-    await db.execute(sqlEliminarProductoDeUnaVenta, [
-      idVentaProducto,
-      idProducto,
-      cantidad,
-    ]);
+    const idVenta = Number(req.params.id);
+    const idProducto = req.body.idProducto;
+    const cantidad = req.body.cantidad;
+    const ventaSubTotal = req.body.ventaSubTotal;
 
-    return res.status(201).send({ id: { idVentaProducto } });
-  } catch (error) {
-    console.error("Error al eliminado el producto:", error.message);
-    return res.status(500).send({ error: "Error al eliminado el producto." });
+    try {
+      const sqlAgregarProductoAVenta =
+        "CALL spAgregarProductoAVenta(?, ?, ?, ?)";
+      const resultadoProductoInsertadoAVenta = await db.execute(
+        sqlAgregarProductoAVenta,
+        [idVenta, idProducto, cantidad, ventaSubTotal]
+      );
+      const id_ventas_producto =
+        resultadoProductoInsertadoAVenta[0][0][0].id_venta_producto;
+
+      return res.status(201).send({
+        productoAgregado: {
+          id_ventas_producto,
+          idVenta,
+          idProducto,
+          cantidad,
+          ventaSubTotal,
+        },
+      });
+    } catch (error) {
+      console.error("Error al agregar producto:", error.message);
+      return res.status(500).send({ error: "Error al agregar producto." });
+    }
   }
-});
+);
+
+router.delete(
+  "/:id/ventas_producto",
+  passport.authenticate("jwt", { session: false }),
+  validarPermisosUsuario(["Administrador", "Editor"]),
+  async (req, res) => {
+    const idVenta = req.params.id;
+
+    try {
+      const sqlObtenerProductosDeVenta = "CALL spObtenerProductosDeVenta(?)";
+      const sqlModificarStockActual = "CALL spModificarStockActual(?, ?)";
+      const sqlEliminarProductosDeVenta = "CALL spEliminarProductosDeVenta(?)";
+
+      const [productos] = await db.execute(sqlObtenerProductosDeVenta, [idVenta]);
+        for (const producto of productos[0]) {
+          const idProducto = producto.id_producto;
+          const cantidad = producto.cantidad;
+          await db.execute(sqlModificarStockActual, [idProducto, -cantidad]);
+        }
+  
+      await db.execute(sqlEliminarProductosDeVenta, [idVenta]);
+
+      return res
+        .status(200)
+        .send({ mensaje: "Producto/s eliminados correctamente." });
+    } catch (error) {
+      console.error("Error al eliminar producto/s de la venta:", error.message);
+      return res
+        .status(500)
+        .send({ error: "Error al eliminar producto/s de la venta." });
+    }
+  }
+);
 
 export default router;
