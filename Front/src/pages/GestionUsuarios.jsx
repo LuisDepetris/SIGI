@@ -97,6 +97,7 @@ const GestionUsuarios = () => {
       })
       setErrores({})
       getUsuarios();
+      alert(method == "POST" ? "¡Usuario creado con exito!" : "¡Usuario editado con exito!");
     } else {
       const { errores } = await response.json();
       setErrores(errores);
