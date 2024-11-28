@@ -82,8 +82,11 @@ function Ventas() {
       );
       alert("Venta eliminada correctamente.");
     } catch (error) {
-      console.error("Error al eliminar la venta:", error);
-      alert("No se pudo eliminar la venta.");
+      alert(
+        `No se pudo eliminar la venta: ${
+          error || "Error desconocido"
+        }`
+      );
     }
   };
 
