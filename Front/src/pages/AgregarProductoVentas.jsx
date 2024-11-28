@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "../styles/AgregarProductoVentas.css";
 import { useAuth } from "../auth/authContext";
+import SelectorFormasPago from "../components/SelectorFormasPago";
 
 function AgregarProductoVentas() {
   const [productos, setProductos] = useState([]);
@@ -38,34 +39,13 @@ function AgregarProductoVentas() {
     obtenerProductos();
   }, []);
 
-  useEffect(() => {
-    const obetenerFormasPago = async () => {
-      try {
-        const respuesta = await fetch(`http://localhost:3000/pagos`);
-
-        if (!respuesta.ok) {
-          const errorData = await respuesta.json();
-          throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
-        }
-
-        const data = await respuesta.json();
-        setFormasPago(data.formasPago);
-      } catch (error) {
-        console.error("Error al obtener las forams de pago:", error);
-        setError("No se pudo cargar la información de las formas de pago.");
-      }
-    };
-
-    obetenerFormasPago();
-  }, []);
-
   const handleSeleccionarProducto = (idProducto) => {
     const producto = productos.find(
       (prod) => prod.id_producto === parseInt(idProducto)
     );
     setProductoSeleccionado(producto);
     setCantidad(1);
-    setError('');
+    setError("");
   };
 
   const handleCantidadChange = (e) => {
@@ -103,7 +83,7 @@ function AgregarProductoVentas() {
         throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
       }
 
-      setError('');
+      setError("");
       navigate("/ventas", { replace: true });
     } catch (error) {
       console.error("Error al guardar el producto:", error);
@@ -191,18 +171,18 @@ function AgregarProductoVentas() {
         </p>
         <div>
           <strong>Forma de Pago:</strong>
-          <select
+          <SelectorFormasPago
             value={formaPagoSeleccionada}
-            onChange={elegirMedioPago}
-          >
-            <option value="">Seleccione una Opción</option>
-            {formasPago.map((forma) => (
-              <option key={forma.id_forma_pago} value={forma.id_forma_pago}>
-                {forma.descripcion}
-              </option>
-            ))}
-            <option value={-1}>Agregar nueva Forma de Pago</option>
-          </select>
+            onChange={(e) => {
+              const idActual = parseInt(e.target.value);
+              if (idActual === -1) {
+                navigate("GestionFormPagos");
+              } else {
+                setFormaPagoSeleccionada(idActual);
+              }
+            }}
+            agregarNuevaFormaPago={true}
+          />
         </div>
         <p>
           <strong>Cantidad Total:</strong> {productosVendidos.length}
