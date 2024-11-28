@@ -129,6 +129,26 @@ function App() {
           }
         />
         <Route
+          path="EditarProductoVentas/GestionFormPagos"
+          element={
+            <AuthPage>
+              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
+                <GestionFormPagos />
+              </AuthRol>
+          </AuthPage>      
+        }
+        />
+        <Route
+          path="AgregarProductoVentas/GestionFormPagos"
+          element={
+            <AuthPage>
+              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
+                <GestionFormPagos />
+              </AuthRol>
+          </AuthPage>      
+        }
+        />
+        <Route
           path="usuarios"
           element={
             <AuthPage>
@@ -154,10 +174,6 @@ function App() {
               <h1>404: Not Found</h1>
             </div>
           }
-        />
-        <Route
-          path="ventas/:id/formas_de_pago"
-          element={<GestionFormPagos />}
         />
       </Route>
     </Routes>

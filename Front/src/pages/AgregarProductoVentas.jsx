@@ -165,6 +165,15 @@ function AgregarProductoVentas() {
     setProductosVendidos(productosActualizados);
   };
 
+  const elegirMedioPago = (e) => {
+    const idActual = parseInt(e.target.value);
+    if (idActual === -1) {
+      navigate("GestionFormPagos");
+    } else {
+      setFormaPagoSeleccionada(idActual);
+    }
+  };
+
   return (
     <div className="pagina-completa">
       <div className="detalle-ventas">
@@ -184,7 +193,7 @@ function AgregarProductoVentas() {
           <strong>Forma de Pago:</strong>
           <select
             value={formaPagoSeleccionada}
-            onChange={(e) => setFormaPagoSeleccionada(e.target.value)}
+            onChange={elegirMedioPago}
           >
             <option value="">Seleccione una Opción</option>
             {formasPago.map((forma) => (
@@ -192,6 +201,7 @@ function AgregarProductoVentas() {
                 {forma.descripcion}
               </option>
             ))}
+            <option value={-1}>Agregar nueva Forma de Pago</option>
           </select>
         </div>
         <p>
