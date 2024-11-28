@@ -12,6 +12,7 @@ const GestionUsuarios = () => {
       password: "",
       id_rol: 0
   })
+  const [editar, setEditar] = useState(false);
   const { sesion } = useAuth();
   const [errores, setErrores] = useState({});
 
@@ -56,6 +57,7 @@ const GestionUsuarios = () => {
   const handleEditar = (idUsuario) =>{
     const usuarioAEditar = usuarios.find(usu => usu.id_usuario === idUsuario);
     setUsuario({...usuarioAEditar, password: ""})
+    setEditar(true)
   }
 
   const handleEliminar = async (idUsuario) =>{
@@ -117,6 +119,7 @@ const GestionUsuarios = () => {
       id_rol: 0
     })
     setErrores({})
+    setEditar(false)
   }
   return (
     <div style={{ margin: "100px" }}>
@@ -124,13 +127,15 @@ const GestionUsuarios = () => {
       <form className="formulario-usuario">
         <div className="form-group">
           <label>Nombre de Usuario:</label>
+          {editar ? <p>{usuario.username}</p>
+          : 
           <input
             type="text"
             value={usuario.username}
             onChange={(e) =>
               setUsuario({ ...usuario, username: e.target.value })
             }
-          />
+          />}
           {errores.username && <div style={{color: "red"}}>{errores.username.msg}</div>}
         </div>
         <div className="form-group">
@@ -146,6 +151,9 @@ const GestionUsuarios = () => {
         </div>
         <div className="form-group">
           <label>Rol:</label>
+          {(editar && sesion.idUsuario == usuario.id_usuario && usuario.id_rol === 1)
+          ? <p>{roles.find(rol => rol.id_rol == usuario.id_rol)?.nombre}</p>
+          : (
           <select name="idRol" value={usuario.id_rol} onChange={elegirRol}>
             <option value="0">Selecciona un rol</option>
             {roles.map((rol) => (
@@ -153,7 +161,7 @@ const GestionUsuarios = () => {
                 {rol.nombre}
               </option>
             ))}
-          </select>
+          </select>)}
           {errores.idRol && <div style={{color: "red"}}>{errores.idRol.msg}</div>}
         </div>
         <div className="button-group">
@@ -192,12 +200,6 @@ const GestionUsuarios = () => {
                 </button>
                 {usuario.id_usuario != sesion.idUsuario && 
                 ( <button className="btn-eliminar" onClick={() => handleEliminar(usuario.id_usuario)}> 🗑️ </button> )}
-                {/* <button
-                  className="btn-eliminar"
-                  onClick={()=>handleEliminar(usuario.id_usuario)}
-                >
-                  🗑️
-                </button> */}
               </td>
               <td>{usuario.id_usuario}</td>
               <td>{usuario.username}</td>
