@@ -97,6 +97,7 @@ const GestionUsuarios = () => {
       })
       setErrores({})
       getUsuarios();
+      alert(method == "POST" ? "¡Usuario creado con exito!" : "¡Usuario editado con exito!");
     } else {
       const { errores } = await response.json();
       setErrores(errores);
@@ -189,12 +190,14 @@ const GestionUsuarios = () => {
                 >
                   ✏️
                 </button>
-                <button
+                {usuario.id_usuario != sesion.idUsuario && 
+                ( <button className="btn-eliminar" onClick={() => handleEliminar(usuario.id_usuario)}> 🗑️ </button> )}
+                {/* <button
                   className="btn-eliminar"
                   onClick={()=>handleEliminar(usuario.id_usuario)}
                 >
                   🗑️
-                </button>
+                </button> */}
               </td>
               <td>{usuario.id_usuario}</td>
               <td>{usuario.username}</td>

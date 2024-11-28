@@ -77,7 +77,17 @@ function AgregarProductoVentas() {
     navigate("/ventas");
   };
 
+  const cantidadTotal = productosVendidos.reduce(
+    (acumulador, producto) => acumulador + producto.cantidad,
+    0
+  );
+
   const handleGuardar = async () => {
+    if (formaPagoSeleccionada === "" || isNaN(formaPagoSeleccionada)) {
+      alert("Seleccione la forma de pago para continuar");
+      return;
+    }
+
     if (productosVendidos.length === 0) {
       setError("Debe agregar un producto");
       return;
@@ -92,7 +102,7 @@ function AgregarProductoVentas() {
         },
         body: JSON.stringify({
           ventaTotal: ventaTotal,
-          cantidadTotal: cantidad,
+          cantidadTotal: cantidadTotal,
           idFormaPago: formaPagoSeleccionada,
           productos: productosVendidos,
         }),
