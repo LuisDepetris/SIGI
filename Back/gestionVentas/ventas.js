@@ -9,16 +9,23 @@ import validarPermisosUsuario from "../middlewares/validarPermisosUsuario.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
+  const { offset = 0, limit = 10 } = req.query;
+
   try {
-    const sql = "CALL spVerVentas()";
-    const [ventas] = await db.execute(sql);
-    return res.status(200).send({ ventas: ventas[0] });
+    const sql = "CALL spVerVentas(? , ?)";
+    const [ventas] = await db.execute(sql, [offset, limit]);
+    const sqlTotalVentas =
+      "SELECT COUNT(*) AS total FROM ventas WHERE inhabilitada = FALSE;";
+    const [total] = await db.execute(sqlTotalVentas);
+    return res
+      .status(200)
+      .send({ ventas: ventas[0], paginacion: { total: total[0].total } });
   } catch (error) {
     return res.status(500).send({ error: "Error al traer ventas" });
   }
 });
 
-router.get("/:id/ventas_producto", validarId(), async (req, res) => {
+router.get("/:id/productos", validarId(), async (req, res) => {
   const validacion = validationResult(req);
   if (!validacion.isEmpty()) {
     return res.status(400).send({ errores: validacion.array() });
@@ -69,51 +76,57 @@ router.get("/:id/ventas_producto", validarId(), async (req, res) => {
   }
 });
 
-router.post("/", validarAtributosVenta(), async (req, res) => {
-  const validacion = validationResult(req);
-  if (!validacion.isEmpty()) {
-    res.status(400).send({ errores: validacion.array() });
-    return;
-  }
-
-  const ventaTotal = req.body.ventaTotal;
-  const cantidadTotal = req.body.cantidadTotal;
-  const idFormaPago = req.body.idFormaPago;
-  const productos = req.body.productos;
-
-  try {
-    const sqlInsertarVenta = "CALL spCrearVenta (?,?,?)";
-    const resultadoVentaInsertada = await db.execute(sqlInsertarVenta, [
-      ventaTotal,
-      cantidadTotal,
-      idFormaPago,
-    ]);
-    const idVenta = resultadoVentaInsertada[0][0][0].id_venta;
-
-    const sqlAgregarProductoAVenta =
-      "CALL spAgregarProductoAVenta (?, ?, ?, ?)";
-
-    for (const producto of productos) {
-      const idProducto = producto.id_producto;
-      const cantidad = producto.cantidad;
-      const ventaSubTotal = producto.ventaSubTotal;
-
-      await db.execute(sqlAgregarProductoAVenta, [
-        idVenta,
-        idProducto,
-        cantidad,
-        ventaSubTotal,
-      ]);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  validarPermisosUsuario(["Administrador", "Editor", "Lector"]),
+  validarAtributosVenta(),
+  async (req, res) => {
+    const validacion = validationResult(req);
+    if (!validacion.isEmpty()) {
+      res.status(400).send({ errores: validacion.array() });
+      return;
     }
 
-    return res
-      .status(201)
-      .send({ venta: { idVenta, ventaTotal, cantidadTotal, idFormaPago } });
-  } catch (error) {
-    console.error("Error al insertar la venta: ", error.message);
-    return res.status(500).send({ error: "Error al insertar la venta" });
+    const ventaTotal = req.body.ventaTotal;
+    const cantidadTotal = req.body.cantidadTotal;
+    const idFormaPago = req.body.idFormaPago;
+    const productos = req.body.productos;
+
+    try {
+      const sqlInsertarVenta = "CALL spCrearVenta (?,?,?)";
+      const resultadoVentaInsertada = await db.execute(sqlInsertarVenta, [
+        ventaTotal,
+        cantidadTotal,
+        idFormaPago,
+      ]);
+      const idVenta = resultadoVentaInsertada[0][0][0].id_venta;
+
+      const sqlAgregarProductoAVenta =
+        "CALL spAgregarProductoAVenta (?, ?, ?, ?)";
+
+      for (const producto of productos) {
+        const idProducto = producto.id_producto;
+        const cantidad = producto.cantidad;
+        const ventaSubTotal = producto.ventaSubTotal;
+
+        await db.execute(sqlAgregarProductoAVenta, [
+          idVenta,
+          idProducto,
+          cantidad,
+          ventaSubTotal,
+        ]);
+      }
+
+      return res
+        .status(201)
+        .send({ venta: { idVenta, ventaTotal, cantidadTotal, idFormaPago } });
+    } catch (error) {
+      console.error("Error al insertar la venta: ", error.message);
+      return res.status(500).send({ error: "Error al insertar la venta" });
+    }
   }
-});
+);
 
 router.put(
   "/:id",
@@ -189,9 +202,9 @@ router.delete(
 );
 
 router.post(
-  "/:id/ventas_producto",
+  "/:id/productos",
   passport.authenticate("jwt", { session: false }),
-  validarPermisosUsuario(["Administrador", "Editor"]),
+  validarPermisosUsuario(["Administrador", "Editor", "Lector"]),
   validarId(),
   validarAtributosVentaProducto(),
   async (req, res) => {
@@ -233,7 +246,7 @@ router.post(
 );
 
 router.delete(
-  "/:id/ventas_producto",
+  "/:id/productos",
   passport.authenticate("jwt", { session: false }),
   validarPermisosUsuario(["Administrador", "Editor"]),
   async (req, res) => {
@@ -244,13 +257,15 @@ router.delete(
       const sqlModificarStockActual = "CALL spModificarStockActual(?, ?)";
       const sqlEliminarProductosDeVenta = "CALL spEliminarProductosDeVenta(?)";
 
-      const [productos] = await db.execute(sqlObtenerProductosDeVenta, [idVenta]);
-        for (const producto of productos[0]) {
-          const idProducto = producto.id_producto;
-          const cantidad = producto.cantidad;
-          await db.execute(sqlModificarStockActual, [idProducto, -cantidad]);
-        }
-  
+      const [productos] = await db.execute(sqlObtenerProductosDeVenta, [
+        idVenta,
+      ]);
+      for (const producto of productos[0]) {
+        const idProducto = producto.id_producto;
+        const cantidad = producto.cantidad;
+        await db.execute(sqlModificarStockActual, [idProducto, -cantidad]);
+      }
+
       await db.execute(sqlEliminarProductosDeVenta, [idVenta]);
 
       return res

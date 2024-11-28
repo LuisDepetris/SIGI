@@ -19,7 +19,7 @@ function DetalleVentas() {
     const obtenerDetalleVenta = async () => {
       try {
         const respuesta = await fetch(
-          `http://localhost:3000/ventas/${id}/ventas_producto`
+          `http://localhost:3000/ventas/${id}/productos`
         );
 
         if (!respuesta.ok) {
