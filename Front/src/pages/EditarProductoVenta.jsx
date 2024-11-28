@@ -235,7 +235,7 @@ function EditarProductoVentas() {
   const elegirMedioPago = (e) => {
     const idActual = parseInt(e.target.value);
     if (idActual === -1) {
-      navigate("formas_de_pago");
+      navigate("GestionFormPagos");
     } else {
       setFormaPagoSeleccionada(idActual);
     }
