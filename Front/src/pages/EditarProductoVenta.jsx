@@ -47,14 +47,26 @@ function EditarProductoVentas() {
     obtenerProductos();
   }, []);
 
-  const handleSeleccionarProducto = (id_producto) => {
-    const producto = productos.find(
-      (prod) => prod.id_producto === parseInt(id_producto)
-    );
+  const handleSeleccionarProducto = async (id_producto) => {
+    try {
+      // Obtener detalles del producto desde el backend
+      const respuesta = await fetch(
+        `http://localhost:3000/productos/${id_producto}`
+      );
+      if (!respuesta.ok) {
+        throw new Error("Error al obtener los detalles del producto");
+      }
 
-    setProductoSeleccionado(producto);
-    setCantidad(1);
-    setError("");
+      const { producto } = await respuesta.json();
+
+      // Actualizar el estado con los detalles del producto
+      setProductoSeleccionado(producto);
+      setCantidad(1);
+      setError("");
+    } catch (error) {
+      console.error("Error al obtener detalles del producto:", error);
+      setError("No se pudieron obtener los detalles del producto.");
+    }
   };
 
   const handleCantidadChange = (e) => {
@@ -302,16 +314,7 @@ function EditarProductoVentas() {
           <label htmlFor="select-producto">Producto:</label>
           <SelectorProductos
             value={productoSeleccionado?.id_producto || null}
-            productos={productos.map((p) => ({
-              value: p.id_producto,
-              label: p.nombre_producto,
-            }))}
-            onChange={(idProducto) => {
-              const producto = productos.find(
-                (p) => p.id_producto === idProducto
-              );
-              setProductoSeleccionado(producto || null);
-            }}
+            onChange={(idProducto) => handleSeleccionarProducto(idProducto)}
           />
         </div>
 
