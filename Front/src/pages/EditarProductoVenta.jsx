@@ -234,6 +234,11 @@ function EditarProductoVentas() {
     }
   };
 
+  const cantidadTotal = productosVendidos.reduce(
+    (acumulador, producto) => acumulador + producto.cantidad,
+    0
+  );
+
   return (
     <div className="pagina-completa">
       <div className="detalle-ventas">
@@ -265,7 +270,7 @@ function EditarProductoVentas() {
           />
         </div>
         <p>
-          <strong>Cantidad Total:</strong> {productosVendidos.length}
+          <strong>Cantidad Total:</strong> {cantidadTotal}
         </p>
         <table className="productos-tabla">
           <thead>
