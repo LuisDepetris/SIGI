@@ -1,0 +1,80 @@
+.detalle-ventas {
+  padding: 80px;
+}
+
+.detalle-ventas h2,
+.detalle-ventas h3 {
+  color: #333;
+}
+
+.detalle-ventas p {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+.productos-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.productos-tabla th,
+.productos-tabla td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.productos-tabla th {
+  background-color: #0078d7;
+  color: white;
+}
+
+.productos-tabla tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.btn-volver {
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #0078d7;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.btn-volver:hover {
+  background-color: #005bb5;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+.botones-edicion {
+  margin: 10px;
+  padding: 10px;
+  background-color: #0078d7;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.botones-edicion:hover {
+  background-color: #005bb5;
+}
+
+.btn-eliminar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.botones-edicion:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

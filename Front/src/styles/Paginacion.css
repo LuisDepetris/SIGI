@@ -1,0 +1,37 @@
+.paginacion {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.paginacion button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.paginacion button.activo {
+  background-color: #007bff;
+  color: white;
+}
+
+.paginacion button:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+.registros-info {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.selector-limite {
+  padding: 3px 10px;
+  border-radius: 5px;
+  width: 75px;
+  margin-bottom: 2px;
+}

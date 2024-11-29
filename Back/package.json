@@ -2,15 +2,22 @@
   "name": "back",
   "version": "1.0.0",
   "main": "app.js",
-  "type" : "module",
+  "type": "module",
   "scripts": {
-    "dev" : "node --watch ./app.js"
+    "dev": "node --env-file=.env --watch ./app.js"
   },
   "keywords": [],
   "author": "Null",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^4.21.1"
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "express-validator": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.3",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1"
   }
 }

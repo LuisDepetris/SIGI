@@ -1,0 +1,80 @@
+.ventas {
+  padding: 100px;
+}
+
+.header-ventas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.btn-nuevo {
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.ventas-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  cursor: pointer;
+}
+
+.ventas-tabla th,
+.ventas-tabla td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.ventas-tabla th {
+  background-color: #0078d7;
+  color: white;
+  cursor: pointer;
+}
+
+.ventas-tabla tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.ventas-tabla tr:hover {
+  background-color: #ddd;
+}
+
+.btn-buscar {
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-detalles {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-eliminar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.textBox {
+  border-radius: 5px;
+  height: 25px;
+  width: 80%;
+}
+
+.total-ventas {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  text-align: right;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}

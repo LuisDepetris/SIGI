@@ -1,0 +1,14 @@
+.container-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100vh;
+}
+
+.btn-volver {
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
