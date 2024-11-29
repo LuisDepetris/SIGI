@@ -131,6 +131,7 @@ function Productos() {
 
   const handleLimitChange = (num) => {
     setLimite(num);
+    setPaginaActual(1);
   };
 
   return (
