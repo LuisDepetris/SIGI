@@ -30,7 +30,10 @@ const GestionFormPagos = () => {
   const agregarFormaPago = async (nuevaFormaPago) => {
     const response = await fetch("http://localhost:3000/Pagos", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sesion.token}`
+       },
       body: JSON.stringify({ descripcion: nuevaFormaPago }),
     });
     if (response.ok) {
