@@ -182,7 +182,10 @@ function Productos() {
                 className="textBox"
                 type="text"
                 value={terminoBusqueda}
-                onChange={(e) => setTerminoBusqueda(e.target.value)}
+                onChange={(e) => {
+                  setTerminoBusqueda(e.target.value);
+                  setPaginaActual(1);
+                }}
                 placeholder="Buscar por nombre"
               />
             </th>
