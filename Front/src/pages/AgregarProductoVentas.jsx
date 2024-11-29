@@ -198,7 +198,7 @@ function AgregarProductoVentas() {
             onChange={(e) => {
               const idActual = parseInt(e.target.value);
               if (idActual === -1) {
-                navigate("GestionFormPagos");
+                navigate("/GestionFormPagos");
               } else {
                 setFormaPagoSeleccionada(idActual);
               }

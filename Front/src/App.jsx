@@ -121,27 +121,7 @@ function App() {
           path="/GestionFormPagos"
           element={
             <AuthPage>
-              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
-                <GestionFormPagos />
-              </AuthRol>
-            </AuthPage>
-          }
-        />
-        <Route
-          path="EditarProductoVentas/GestionFormPagos"
-          element={
-            <AuthPage>
-              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
-                <GestionFormPagos />
-              </AuthRol>
-            </AuthPage>
-          }
-        />
-        <Route
-          path="AgregarProductoVentas/GestionFormPagos"
-          element={
-            <AuthPage>
-              <AuthRol roles={["Administrador", "Editor", "Lector"]}>
+              <AuthRol roles={["Administrador", "Editor"]}>
                 <GestionFormPagos />
               </AuthRol>
             </AuthPage>

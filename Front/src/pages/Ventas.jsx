@@ -85,6 +85,7 @@ function Ventas() {
 
   const handleLimitChange = (num) => {
     setLimite(num);
+    setPaginaActual(1);
   };
 
   const sumaTotalVentas = ventas.reduce(
