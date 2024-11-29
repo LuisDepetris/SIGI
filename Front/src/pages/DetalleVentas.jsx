@@ -107,7 +107,7 @@ function DetalleVentas() {
             Volver a Ventas
           </button>
 
-          <button className="botones-edicion" onClick={handleEditar}>
+          <button className="botones-edicion" onClick={handleEditar} disabled={sesion.rol === "Lector"}>
             Editar Venta
           </button>
         </>
