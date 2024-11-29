@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "../styles/DetalleVentas.css";
 import { useAuth } from "../auth/authContext";
 
@@ -10,10 +10,6 @@ function DetalleVentas() {
   const [venta, setVenta] = useState(null);
   const [productos, setProductos] = useState([]);
   const [error, setError] = useState("");
-  const [formasPago, setFormasPago] = useState([]);
-  const [editando, setEditando] = useState(false);
-  const [formaPagoSeleccionada, setFormaPagoSeleccionada] = useState("");
-  const [eliminando, setEliminando] = useState(false);
 
   useEffect(() => {
     const obtenerDetalleVenta = async () => {
@@ -36,7 +32,7 @@ function DetalleVentas() {
       }
     };
     obtenerDetalleVenta();
-  }, [editando]);
+  }, []);
 
   const handleVolver = () => {
     navigate("/ventas");
@@ -61,19 +57,7 @@ function DetalleVentas() {
           </p>
           <div>
             <strong>Forma de Pago:</strong>
-            {editando ? (
-              <select value={formaPagoSeleccionada} onChange={elegirMedioPago}>
-                <option value="">Seleccione una Opción</option>
-                {formasPago.map((forma) => (
-                  <option key={forma.id_forma_pago} value={forma.id_forma_pago}>
-                    {forma.descripcion}
-                  </option>
-                ))}
-                <option value={-1}>Agregar nueva Forma de Pago</option>
-              </select>
-            ) : (
-              <p>{venta.formaPago}</p>
-            )}
+            <p>{venta.formaPago}</p>
           </div>
           <p>
             <strong>Cantidad Total:</strong> {venta.cantidadTotal}
@@ -107,7 +91,11 @@ function DetalleVentas() {
             Volver a Ventas
           </button>
 
-          <button className="botones-edicion" onClick={handleEditar} disabled={sesion.rol === "Lector"}>
+          <button
+            className="botones-edicion"
+            onClick={handleEditar}
+            disabled={sesion.rol === "Lector"}
+          >
             Editar Venta
           </button>
         </>

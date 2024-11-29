@@ -10,12 +10,9 @@ function AgregarProductoVentas() {
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [cantidad, setCantidad] = useState(1);
   const [error, setError] = useState("");
-  const [detalleVenta, setDetalleVenta] = useState([]);
   const [productosVendidos, setProductosVendidos] = useState([]);
   const { sesion } = useAuth();
-  const [productosActualizados, setProductosActualizados] = useState([]);
   const navigate = useNavigate();
-  const [formasPago, setFormasPago] = useState([]);
   const [formaPagoSeleccionada, setFormaPagoSeleccionada] = useState("");
   const { idVenta } = useParams();
 
@@ -76,6 +73,15 @@ function AgregarProductoVentas() {
     0
   );
 
+  const subtotal = productoSeleccionado
+    ? productoSeleccionado.precio_final * cantidad
+    : 0;
+
+  const ventaTotal = productosVendidos.reduce(
+    (ac, current) => ac + current.ventaSubTotal,
+    0
+  );
+
   const handleGuardar = async () => {
     if (formaPagoSeleccionada === "" || isNaN(formaPagoSeleccionada)) {
       alert("Seleccione la forma de pago para continuar");
@@ -115,15 +121,6 @@ function AgregarProductoVentas() {
     }
   };
 
-  const subtotal = productoSeleccionado
-    ? productoSeleccionado.precio_final * cantidad
-    : 0;
-
-  const ventaTotal = productosVendidos.reduce(
-    (ac, current) => ac + current.ventaSubTotal,
-    0
-  );
-
   const handleAgregarProducto = () => {
     if (!productoSeleccionado || cantidad <= 0) {
       setError("Seleccione un producto y una cantidad válida.");
@@ -138,6 +135,7 @@ function AgregarProductoVentas() {
     const estaCargado = productosVendidos.some(
       (producto) => producto.id_producto === productoSeleccionado.id_producto
     );
+
     if (estaCargado) {
       const productosActualizados = productosVendidos.map((producto) => {
         if (producto.id_producto === productoSeleccionado.id_producto) {
