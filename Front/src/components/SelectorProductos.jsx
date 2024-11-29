@@ -6,7 +6,6 @@ function SelectorProductos({ value, onChange }) {
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
 
-  // Cargar productos desde el backend
   const cargarProductos = async (busqueda = "") => {
     setCargando(true);
     try {
@@ -31,13 +30,12 @@ function SelectorProductos({ value, onChange }) {
     }
   };
 
-  // Manejo de búsqueda
   const manejarBusqueda = (inputValue) => {
     cargarProductos(inputValue);
   };
 
   useEffect(() => {
-    cargarProductos(); // Cargar productos iniciales
+    cargarProductos();
   }, []);
 
   return (
@@ -46,10 +44,8 @@ function SelectorProductos({ value, onChange }) {
       <Select
         options={productos}
         value={productos.find((p) => p.value === value) || null}
-        onChange={
-          (selectedOption) => onChange(selectedOption?.value || null) // Enviar el ID seleccionado al padre
-        }
-        onInputChange={manejarBusqueda} // Manejar búsqueda dinámica
+        onChange={(selectedOption) => onChange(selectedOption?.value || null)}
+        onInputChange={manejarBusqueda}
         placeholder={cargando ? "Cargando productos..." : "Buscar producto..."}
         isSearchable={true}
         noOptionsMessage={() =>

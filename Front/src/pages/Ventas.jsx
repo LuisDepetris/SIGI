@@ -11,9 +11,7 @@ function Ventas() {
   const [paginaActual, setPaginaActual] = useState(1);
   const [limite, setLimite] = useState(10);
   const { sesion } = useAuth();
-
   const navigate = useNavigate();
-
   const totalPaginas = Math.ceil(totalVentas / limite);
   const registrosInicio = totalVentas > 0 ? (paginaActual - 1) * limite + 1 : 0;
   const registrosFin =
@@ -77,16 +75,11 @@ function Ventas() {
         throw new Error(`Error ${respuesta.status}: ${errorData.error}`);
       }
 
-      setVentas((prevVentas) =>
-        prevVentas.filter((venta) => venta.id_venta !== id)
-      );
+      setVentas(ventas.filter((venta) => venta.id_venta !== id));
+
       alert("Venta eliminada correctamente.");
     } catch (error) {
-      alert(
-        `No se pudo eliminar la venta: ${
-          error || "Error desconocido"
-        }`
-      );
+      alert(`No se pudo eliminar la venta: ${error || "Error desconocido"}`);
     }
   };
 

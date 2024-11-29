@@ -13,9 +13,7 @@ function EditarProductoVentas() {
   const [error, setError] = useState("");
   const [productosVendidos, setProductosVendidos] = useState([]);
   const { sesion } = useAuth();
-  const [productosActualizados, setProductosActualizados] = useState([]);
   const navigate = useNavigate();
-  const [formasPago, setFormasPago] = useState([]);
   const [formaPagoSeleccionada, setFormaPagoSeleccionada] = useState("");
   const location = useLocation();
   const { venta } = location.state || {};
@@ -49,7 +47,6 @@ function EditarProductoVentas() {
 
   const handleSeleccionarProducto = async (id_producto) => {
     try {
-      // Obtener detalles del producto desde el backend
       const respuesta = await fetch(
         `http://localhost:3000/productos/${id_producto}`
       );
@@ -59,7 +56,6 @@ function EditarProductoVentas() {
 
       const { producto } = await respuesta.json();
 
-      // Actualizar el estado con los detalles del producto
       setProductoSeleccionado(producto);
       setCantidad(1);
       setError("");
@@ -99,7 +95,6 @@ function EditarProductoVentas() {
     }
 
     try {
-      // Eliminar todos los productos existentes
       const respuestaDelete = await fetch(
         `http://localhost:3000/ventas/${idVenta}/productos`,
         {
@@ -117,7 +112,6 @@ function EditarProductoVentas() {
         );
       }
 
-      // Guardar productos en la venta
       for (const producto of productosVendidos) {
         const { idProducto, cantidad, subTotal } = producto;
 
@@ -145,7 +139,6 @@ function EditarProductoVentas() {
         }
       }
 
-      // Actualizar detalles de la venta
       const respuestaVenta = await fetch(
         `http://localhost:3000/ventas/${idVenta}`,
         {
@@ -188,13 +181,11 @@ function EditarProductoVentas() {
       return;
     }
 
-    // Actualizar producto existente o agregar nuevo producto
     const productoIndex = productosVendidos.findIndex(
       (producto) => producto.idProducto === productoSeleccionado.id_producto
     );
 
     if (productoIndex !== -1) {
-      // Si el producto ya existe, actualiza la cantidad y el subtotal
       const productosActualizados = [...productosVendidos];
       productosActualizados[productoIndex] = {
         ...productosActualizados[productoIndex],
@@ -205,7 +196,6 @@ function EditarProductoVentas() {
       };
       setProductosVendidos(productosActualizados);
     } else {
-      // Si el producto no existe, lo agrega como un nuevo registro
       setProductosVendidos([
         ...productosVendidos,
         {
@@ -217,10 +207,10 @@ function EditarProductoVentas() {
         },
       ]);
     }
-    // Limpiar selección
+
     setProductoSeleccionado(null);
     setCantidad(1);
-    setError(""); // Limpiar errores
+    setError("");
   };
 
   const handleBorrar = (idProducto) => {
@@ -236,7 +226,6 @@ function EditarProductoVentas() {
       navigate("/GestionFormPagos");
     }
     if (isNaN(idActual)) {
-      // Si el valor no es un número válido, restablece el estado
       setFormaPagoSeleccionada("");
     } else {
       setFormaPagoSeleccionada(idActual);
